@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>STARFOLD — Hints &amp; Game Mechanics</title>
+<style>
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    background: #000000;
+    color: #AAAAAA;
+    font-family: "Courier New", Courier, monospace;
+    font-size: 15px;
+    line-height: 1.55;
+    padding: 16px;
+    margin: 0;
+  }
+  .wrap {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  h1, h2, h3 { line-height: 1.3; overflow-wrap: break-word; }
+  h1 { color: #55FFFF; font-size: 1.6em; margin: 0 0 .4em; }
+  h2 {
+    color: #55FFFF;
+    font-size: 1.25em;
+    margin: 1.8em 0 .5em;
+    border-bottom: 1px solid #00AAAA;
+    padding-bottom: .2em;
+  }
+  h3 {
+    color: #00AAAA;
+    font-size: 1.05em;
+    margin: 1.4em 0 .5em;
+  }
+  p, li { overflow-wrap: break-word; }
+  p { margin: .6em 0; }
+  a { color: #55FFFF; text-decoration: underline; }
+  strong { color: #FFFFFF; }
+  em { color: #FFFF55; font-style: italic; }
+  code {
+    color: #55FF55;
+    background: #111;
+    padding: 0 3px;
+    border-radius: 2px;
+    font-family: "Courier New", Courier, monospace;
+  }
+  .intro { color: #AAAAAA; }
+  .warn { color: #FF5555; font-weight: bold; }
+  .part2-note { color: #AA5500; }
+  ul, ol { margin: .5em 0; padding-left: 1.6em; }
+  li { margin: .35em 0; }
+  details {
+    margin: .4em 0 .9em;
+  }
+  summary {
+    cursor: pointer;
+    display: inline-block;
+    border: 1px solid #00AAAA;
+    border-color: #00AAAA #333;
+    background: #111;
+    color: #55FFFF;
+    padding: 3px 10px;
+    margin: 0;
+    list-style: none;
+    font-family: "Courier New", Courier, monospace;
+    font-size: .95em;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary:hover {
+    background: #002222;
+    color: #55FFFF;
+    border-color: #55FFFF;
+  }
+  details[open] > summary {
+    color: #FFFF55;
+    border-color: #AA5500 #333;
+  }
+  .reveal-body {
+    border-left: 2px solid #00AAAA;
+    padding: .2em 0 .2em 12px;
+    margin-top: .5em;
+  }
+  .answer > summary { color: #FFFF55; border-color: #AA5500 #333; }
+  .answer > summary:hover { color: #FFFF55; border-color: #FFFF55; }
+  .part2-toggle > summary {
+    color: #FF5555;
+    border-color: #AA5500 #333;
+    font-size: 1em;
+  }
+  .part2-toggle > summary:hover { color: #FF5555; border-color: #FF5555; }
+  .scroll-x {
+    overflow-x: auto;
+    max-width: 100%;
+  }
+  table {
+    border-collapse: collapse;
+    margin: .6em 0;
+  }
+  th, td {
+    border: 1px solid #333;
+    padding: 4px 8px;
+    text-align: left;
+    white-space: nowrap;
+  }
+  th { color: #55FFFF; }
+  hr { border: none; border-top: 1px solid #333; margin: 2em 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>STARFOLD — Hints &amp; Game Mechanics</h1>
+
+<p class="warn">Do not read this if you want to play blind.</p>
+
+<div class="intro">
+<ul>
+<li><strong>Part I - Hints</strong> is for the player: the questions you'll actually ask, each with a <strong>Hint</strong> (a nudge; read this first and stop) and an <strong>Answer</strong> (the full solution).</li>
+<li><strong>Part II - Game Mechanics</strong> is for anyone who wants to know how it works under the hood: design intent, internal names, formulas, tuning values.</li>
+</ul>
+<p><strong>Nothing is revealed until you click. Reveal only what you need.</strong></p>
+</div>
+
+<hr>
+
+<h1>Part I - Hints</h1>
+
+<h2>Getting started</h2>
+
+<h3>What happened to us? Why are we stranded out here?</h3>
+<details class="hint"><summary>▶ HINT</summary>
+<div class="reveal-body"><p>The "malfunction" was nothing of the kind. Something very old reached for the one ship that could make the trip. Ask the locals about the past, and watch the stars.</p></div>
+</details>
+<details class="answer"><summary>▶ ANSWER</summary>
+<div class="reveal-body"><p>The "malfunction" was a summons. Something ancient reached across the galaxy and pulled the Vanguard here on purpose, mid-fold — drawn by what she is and by what her fold drive could be rebuilt into. Who did it, and why they needed this ship in particular, is the spine of the whole game; it assembles through the Crystal Lodestar, the ruins, and the Veil, each with its own question below. This hint won't spend those endings for you.</p></div>
+</details>
+
+<h3>A patrol ship wants to "archive" us. How do I survive first contact?</h3>
+<details class="hint"><summary>▶ HINT</summary>
+<div class="reveal-body"><p>The Kvoth are ledger-minds; everything, including you, has a value. Argue in their language, and don't posture. And listen to your officers: a patrol is not a fortress.</p></div>
+</details>
+<details class="answer"><summary>▶ ANSWER</summary>
+<div class="reveal-body"><p>The picket blocks the system exit until the matter is settled, and there are exactly three settlements. <strong>Pay:</strong> talk them around with value or payment arguments (threats draw a warning shot, insults cost reputation); every conversational path ends at the same toll, <strong>100 M3 of thorium</strong>, mined on planet II of your starting system (KX-471, at 125,100). The terrain vehicle holds 50 M3 per trip, so it takes a few runs (oversized deposits keep their remainder between trips). Deliver the toll and you receive, unannounced, the <strong>Transponder Ring</strong>: free passage in Lattice space and Kvoth docking rights. <strong>Fight:</strong> Dr. Johnson is right, the patrol is beatable with the starting laser, but only barely; use EVASIVE PATTERN between shots and expect scars. Firing forfeits the ring path forever. <strong>Flee:</strong> BREAK OFF works roughly one try in three; each failed try eats a point-blank volley. A successful escape simply removes the picket: the system is yours to mine, explore, and leave normally, but the ring then only comes from a later patrol (see "Can I refuse the Kvoth entirely?"). Whatever you choose, the picket departs on its own after about half a stardate (six months), toll unpaid — unless thorium is already in your hold or the TV bay, which reads as compliance in progress and keeps it on station. Don't bother chatting with the picket while it waits; Kvoth lore comes from patrols and stations.</p></div>
+</details>
+
+<h3>Can I refuse the Kvoth entirely?</h3>
+<details class="hint"><summary>▶ HINT</summary>
+<div class="reveal-body"><p>The game is completable without ever being friendly with the Lattice. It is just harder. The ledger, however, never forgets a shot fired.</p></div>
+</details>
+<details class="answer"><summary>▶ ANSWER</summary>
+<div class="reveal-body"><p>Yes. Without the ring every Kvoth ship is hostile and Kvoth stations refuse you (no Chart Core, no cheap class 3 gear, no archive clue to the drone wreck; the drone wreck must be found by exploration instead — though the class 3 scanner itself can still be bought at the Pyre forge or from the corsair black market at 1.5×, keeping the stars-alive chain practical). If you <strong>fled</strong> the picket but never fired on any Kvoth vessel, a back door stays open: any later Kvoth patrol accepts PAY THE TOLL if you have 100 M3 of thorium already aboard; they do not wait while you mine it (the fled picket itself is gone for good). If you ever <strong>fired</strong> on any Kvoth vessel, the toll option is gone for good and the run stays ringless.</p></div>
+</details>
+
+<h3>How do I make money?</h3>
+<details class="hint"><summary>▶ HINT</summary>
+<div class="reveal-body"><p>Ore is worth most to the culture that wants it, and information is an investment.</p></div>
+</details>
+<details class="answer"><summary>▶ ANSWER</summary>
+<div class="reveal-body"><p>Mine and sell at a premium: Kvoth stations pay <strong>1.7×</strong> for radioactives such as thorium. Don't count on the starting system for a fortune, though: planet II holds only <strong>134 M3 of thorium</strong> in total, so after the 100 M3 toll the margin is pocket money; real money means mining other worlds and other elements. Explorers have their own economy: Kvoth stations buy <strong>orbital survey data</strong> for every world you've orbited beyond their sphere (the farther from KV Prime, the better the rate), and xenobiology scans pay <strong>150 CR an entry</strong> — wandering funds its own engines. Three early purchases pay for themselves: the <strong>class 2 engine</strong> (1,200 CR — deep-space flight is what eats the calendar; see the timer question), the <strong>Chart Core</strong> (500 CR, reveals the Kvoth Sphere) and the <strong>class 2 scanner</strong> (1,600 CR; it resolves surface structures from orbit, which the entire ruin chain depends on). Delivering rescue pods from distress beacons is also the main early source of Vel-ma-rah goodwill.</p></div>
+</details>
+
+<h3>The map is huge and empty. Where do I go?</h3>
+<details class="hint"><summary>▶ HINT</summary>
+<div class="reveal-body"><p>Space belongs to somebody almost everywhere. The political map comes from one Kvoth device, and traders sell directions over drinks.</p></div>
+</details>
+<details class="answer"><summary>▶ ANSWER</summary>
+<div class="reveal-body"><p>The <strong>Chart Core</strong> (bought and installed) is what charts the reach's political geography: it draws the spheres of influence (Kvoth, Vel-ma-rah Trade Lanes around the Gilded Reach, Ashkaru Space) dashed on the starmap and reveals their named systems — until then those names read as plain <code>VS-xxx</code> catalogue numbers. With the chart installed, Ens. Lee calls out each sphere as you enter and leave it. The <strong>Corsair Pocket at 110,185 is on no chart</strong> (and draws no border, and earns no navigator call-out); you learn it only from a Vel-ma-rah lounge rumor, as with nearly everything else in this document.</p></div>
+</details>
+
+<h3>Everyone stops talking after a few questions. How do I learn more?</h3>
+<details class="hint"><summary>▶ HINT</summary>
+<div class="reveal-body"><p>Each culture has a currency, and conversation is a purchase.</p></div>
+</details>
+<details class="answer"><summary>▶ ANSWER</summary>
+<div class="reveal-body"><p>Every encounter allows only a handful of statements before the contact signs off, so cultivating a culture takes several meetings. Each has a social key that buys patience and standing: answer Kvoth counter-queries precisely (data is currency), SHARE A STORY with the Vel-ma-rah (stories are currency), answer Ashkaru challenges boldly, since the safe-sounding diplomatic options are the wrong ones (fire is currency), and STAND A ROUND for corsairs (credits are currency).</p></div>
+</details>
+
+<h2>The living stars</h2>
+
+<h3>Some stars blink in the viewport. Is that a rendering bug?</h3>
+<details class="hint"><summary>▶ HINT</summary>
+<div class="reveal-body"><p>No. Note which systems do it, then point the science station at them.</p></div>
+</details>
+<details class="answer"><summary>▶ ANSWER</summary>
+<div class="reveal-body"><p>Roughly one star in six is "awake". Running Science SENSORS in their systems accumulates anomalies; at three, Dr. Johnson voices their hypothesis: the stars are alive. Scanning the rare Watcher drone encounter also counts toward the three. The Kvoth volunteer a matching breadcrumb: 14 stars whose proper motion matches no model.</p></div>
+</details>
+
+<h3>My star scans log "equipment malfunction". Is the scanner broken?</h3>
+<details class="hint"><summary>▶ HINT</summary>
+<div class="reveal-body"><p>The Vel-ma-rah once got exactly the same reading, and wonder aloud whether your sensors might be better than theirs.</p></div>
+</details>
+<details class="answer"><summary>▶ ANSWER</summary>
+<div class="reveal-body"><p>Scanner class gates the discovery: class 1 sees nothing, class 2 logs the "malfunction" (the best the Vel-ma-rah ever had; their yards sell nothing better), and class 3 resolves the anomaly chain. The Kvoth Bastion and the Pyre forge both sell it at list price; the corsair black market fences it at a markup, no questions asked.</p></div>
+</details>
+
+<h3>The Kvoth mentioned "Ancient Watchers". Where does that trail start?</h3>
+<details class="hint"><summary>▶ HINT</summary>
+<div class="reveal-body"><p>Machine memory is long and precise. Earn their trust, then ask.</p></div>
+</details>
+<details class="answer"><summary>▶ ANSWER</summary>
+<div class="reveal-body"><p>At Kvoth rel ≥ 10, asking about the Ancient Watchers yields not a spot but a <strong>descent ellipse — ~15 units about 40,158</strong> (its center just clear of the dark, its far edge dipping into the shallow Dimming where the wreck lies). The exact world is unresolved; several systems lie within (the wreck sits just outside the Dimming's starting edge; the dark spreads over it around SD +1, so fetch it promptly and it's shallow, dawdle and it deepens), and you canvass them, orbiting each visible planet (once the star has gone cold its stellar scan just reports "dead", so trust your eyes and orbit by sight; class 2+ scanner resolves the drone site on the landing map), world by world, until the wreck shows (it sits at 38,165). Expect the dark's drain the whole time — go in shielded and healthy. It holds the <strong>Crystal Lodestar</strong> — a patient, pulsing crystal that reads as a key with no lock in sight. What it opens is a thread of its own; follow the living-stars questions and "Where do I actually meet the star-beings?"</p></div>
+</details>
+
+<h2>Ruins, the Pyramid, fluxes</h2>
+
+<h3>Where are the ancient ruins?</h3>
+<details class="hint"><summary>▶ HINT</summary>
+<div class="reveal-body"><p>Vel-ma-rah lounges sell more than drinks.</p></div>
+</details>
+<details class="answer"><summary>▶ ANSWER</summary>
+<div class="reveal-body"><p>A 600 CR lounge rumor names three ruin worlds: <strong>100,70 / 60,80 / 160,130</strong>, second planet each; the ruins blink on the orbital landing map with a class 2+ scanner. A later 1,500 CR rumor confirms the inscriptions spell out a location.</p></div>
+</details>
+
+<h3>The inscriptions: "200 toward the dawn", a burned-away number "toward the deep", "beneath the red star"?</h3>
+<details class="hint"><summary>▶ HINT</summary>
+<div class="reveal-body"><p>A number, two bearings, a color, and a gap the fire left. Which way is dawn on a starmap? And what color is worth patrolling for?</p></div>
+</details>
+<details class="answer"><summary>▶ ANSWER</summary>
+<div class="reveal-body"><p>Dawn = east (+x), deep = south (+y). The second number burned with the palace wall, by design: fly the x = 200 line toward the deep and watch the starmap for a RED star. Two red stars sit near the line's deep end — the vault is the one at <strong>200,160</strong>; its neighbor is an ordinary sun and a landing party's disappointment. The vault yields the <strong>Pyramid Device</strong>; install it via Science &gt; Analysis and the reach's fluxes become visible.</p></div>
+</details>
+
+<h3>Fluxes bounce me off, and it hurts. How do I transit?</h3>
+<details class="hint"><summary>▶ HINT</summary>
+<div class="reveal-body"><p>Three locks: seeing, being admitted, surviving.</p></div>
+</details>
+<details class="answer"><summary>▶ ANSWER</summary>
+<div class="reveal-body"><p>The Pyramid Device to SEE them, the Humming Weaver woven into your deflector grid to be ADMITTED, and raised shields to SURVIVE. Endpoints: (150,80)↔(55,140), (185,35)↔(92,122), (30,30)↔(236,18). Keep shields up on every transit; once the Weaver has woven itself in, an unshielded transit is fatal.</p></div>
+</details>
+
+<h2>The Ashkaru and the Weaver</h2>
+
+<h3>Ashkaru transmissions are untranslatable war-hymns. How do I talk to them?</h3>
+<details class="hint"><summary>▶ HINT</summary>
+<div class="reveal-body"><p>In the Bazaar Eternal, an unlabeled yellow oddity sits in the trade menu. Dr. Johnson likes puzzles.</p></div>
+</details>
+<details class="answer"><summary>▶ ANSWER</summary>
+<div class="reveal-body"><p>Buy the <strong>YELLOW CURIO</strong> (4,360 CR) at the Bazaar Eternal and run Science &gt; Analysis: it is a descrambler. The Bazaar shelves three more curios beside it at similar prices (Pilgrim's Astrolabe, Silent Bell, Weeping Stone); all three are expensive junk, and analysis says so. With the descrambler analyzed, the next Ashkaru hail unfolds from war-hymn into words — what they say, and what it means that you can finally answer, is worth meeting for yourself. If the curio sits unanalyzed in the hold it audibly HUMS whenever a live Ashkaru signal is on the channel, and Johnson asks for it on her bench — that is the nudge to run the analysis. Without it there are no Ashkaru topics or Pyre Throne docking, but nothing on the critical path strictly requires it.</p></div>
+</details>
+
+<h3>What is the Humming Weaver and how do I get it?</h3>
+<details class="hint"><summary>▶ HINT</summary>
+<div class="reveal-body"><p>The Ashkaru hold one priceless, useless-looking relic, and there is something they want far more. The corsairs know what.</p></div>
+</details>
+<details class="answer"><summary>▶ ANSWER</summary>
+<div class="reveal-body"><p>There is exactly ONE Weaver in the reach, and the Ashkaru hold it. The corsairs sell the stolen <strong>Ashkaru Sunstone</strong> for 20 M3 iridium (once you have heard the offer, destroyed corsairs have a 1-in-50 chance of carrying it as loot, so buying it is by far the reliable path). Return the Sunstone: you are named Sunbringer (Ashkaru rel 60, +virtue) and they gift the Weaver in thanks, a thing of perfect beauty with no apparent function.</p></div>
+</details>
+
+<h3>The Weaver does nothing and Johnson calls it decorative. Should I sell it?</h3>
+<details class="hint"><summary>▶ HINT</summary>
+<div class="reveal-body"><p>A fence will take it off your hands — but some "decorations" are keys you haven't found the lock for yet.</p></div>
+</details>
+<details class="answer"><summary>▶ ANSWER</summary>
+<div class="reveal-body"><p>Keep it. Its function reveals itself at your first contact with a gravitic flux with the Weaver aboard and shields raised: it weaves itself through the live deflector grid, granting flux admission. With shields down it merely shivers; with the Pyramid installed, Johnson notes its hum shifts near fluxes. You <em>can</em> sell it (1,500 CR) before it is woven in — and a fence will sell any offloaded plot relic back to you at double — but selling it forfeits flux transit until you buy it back.</p></div>
+</details>
+
+<h2>The Veil, judgment, and the end</h2>
+
+<h3>Where do I actually meet the star-beings?</h3>
+<details class="hint"><summary>▶ HINT</summary>
+<div class="reveal-body"><p>A star with no planets, in the far northeast, that answers a very old crystal.</p></div>
+</details>
+<details class="answer"><summary>▶ ANSWER</summary>
+<div class="reveal-body"><p>The hidden star, the Veil, sits at <strong>243,12</strong>. Until the Lodestar is FULLY analyzed (<code>resonanceRead</code>, which needs the stars-alive chain first) the star does not register at all — you fly straight over the spot as if it were empty space, and charting, scanning, hailing, and the Lodestar's proximity tremor are all inert. That analysis names Rhan Fayr but no longer gives a bearing, so reach the northeast corner by exploration (direct flight needs neither Pyramid nor Weaver) or via the 30,30↔236,18 flux; the corsairs' dead-men ghost story marks the 30,30 mouth, though without the Pyramid there is nothing to see there. Only then, within 20 units, does the Crystal Lodestar tremble and its blips quicken with a directional hint. Scan the star (its pulse matches the Lodestar's), then hail it with the Lodestar aboard → <strong>SUBMIT TO JUDGMENT</strong>.</p></div>
+</details>
+
+<h3>What does the judgment actually judge? Can I fail?</h3>
+<details class="hint"><summary>▶ HINT</summary>
+<div class="reveal-body"><p>The stars have been watching everything, including the deeds "nobody saw".</p></div>
+</details>
+<details class="answer"><summary>▶ ANSWER</summary>
+<div class="reveal-body"><p>Passing requires <strong>virtue ≥ 4</strong>. The reach is saved either way, because the Rhan Fayr always give the Ember and rebuild the drive; the verdict decides only your own fate. Worthy: the birth-surge carries the Vanguard home. Wanting: the way home is forfeit, forever, and the epilogue keeps you in the reach. There is no re-judgment. And one hard rule overrides the arithmetic: ANY kill of a Vel-ma-rah caravel forfeits the way home regardless of your total.</p></div>
+</details>
+
+<h3>Killing Vel-ma-rah caravels seems consequence-free. Is it?</h3>
+<details class="hint"><summary>▶ HINT</summary>
+<div class="reveal-body"><p>"Ain't like the clouds'll notice one missing." The clouds aren't the only ones watching.</p></div>
+</details>
+<details class="answer"><summary>▶ ANSWER</summary>
+<div class="reveal-body"><p>It is the game's designed temptation: easy kills, rich auralite salvage, no faction standing lost, and nobody ever mentions it (only a caravel that escapes after being fired on tells its clans: rel −50). But every quiet sin is recorded, the bill lands at judgment, and any caravel kill forfeits the way home outright. The full ledger is in Part II.</p></div>
+</details>
+
+<h3>How do I raise virtue?</h3>
+<details class="hint"><summary>▶ HINT</summary>
+<div class="reveal-body"><p>Kindness that costs you something. But the same kindness repeated buys less each time.</p></div>
+</details>
+<details class="answer"><summary>▶ ANSWER</summary>
+<div class="reveal-body"><p>Return the Sunstone (+3 — how you <em>obtained</em> it moves nothing), heal the plague ship (+2), aid distress calls with parts or pod rescues (+1), scan the void-whale instead of shooting it (+1), trust the Ashkaru relic exchange (+1). Repeated good deeds of the same kind diminish toward zero; sins never do, and nothing can repay them. An entirely empty ledger earns its own condemnation. Indifference casts a shadow too.</p></div>
+</details>
+
+<h3>The darkness on the starmap keeps growing. Am I on a timer?</h3>
+<details class="hint"><summary>▶ HINT</summary>
+<div class="reveal-body"><p>The reach is dying, but everything you need outlives it, except one culture.</p></div>
+</details>
+<details class="answer"><summary>▶ ANSWER</summary>
+<div class="reveal-body"><p>The Dimming spreads from the Maw at 25,175. <strong>Ashkar (the Pyre Throne) dies at SD +4.3</strong>; its forge and the Sunstone quest line are the game's timed content, though refugee warbrands afterwards still allow the Sunstone return, so the Weaver is never lost for good. Every quest-critical system sits outside the final doom radius: the game is always completable. Hard game over ("the chorus fails") lands around <strong>SD +8.5</strong>. Your ENGINE class is the real clock lever: deep-space thrust is what eats the calendar, so upgrading the drive early (class 2, then 3) is the difference between racing the Dimming and merely noticing it. On a class 1 drive the whole voyage barely fits before the end.</p></div>
+</details>
+
+<h3>Where do I buy gear better than class 3?</h3>
+<details class="hint"><summary>▶ HINT</summary>
+<div class="reveal-body"><p>The best forges belong to the people nobody can talk to. Yet.</p></div>
+</details>
+<details class="answer"><summary>▶ ANSWER</summary>
+<div class="reveal-body"><p>Kvoth yards cap engines, shields, and armor at class 3 (cargo pods go to max). Everything above is forged only at the Pyre Throne (descrambler installed + Ashkaru rel ≥ 10 to dock), and it dies with Ashkar. After that, non-hostile corsairs sell lasers and missiles at 1.5× the forge price. The Bazaar Eternal, ever helpful, also stocks shields up to class 4. The merchants speak very highly of them.</p></div>
+</details>
+
+<h3>How do I finish the game?</h3>
+<details class="hint"><summary>▶ HINT</summary>
+<div class="reveal-body"><p>Where the instruments lie, trust the crystal's pulse.</p></div>
+</details>
+<details class="answer"><summary>▶ ANSWER</summary>
+<div class="reveal-body"><p>After judgment, fly into the Dimming toward <strong>25,175</strong>. Inside the Long Dark there are no stars, the position readout scrambles, the starmap loses your ship, and systems drain. CLAUD suspends all field repairs inside (the decay outpaces him, and he says so on every crossing), so what you bring is what you have: go in with full shields, life support, and health. The Lodestar pulses faster as you close on the Maw and leans a compass direction. At the throat: <strong>CAPTAIN &gt; FOLD DRIVE</strong>. The Ember ignites a newborn star inside the Maw, and the birth-surge throws the Vanguard home, if the judgment allowed it.</p></div>
+</details>
+
+<hr>
+
+<details class="part2-toggle"><summary>▶ REVEAL PART II — GAME MECHANICS (full spoilers)</summary>
+<div class="reveal-body">
+
+<h1>Part II - Game Mechanics</h1>
+
+<h2>Story spine (design)</h2>
+
+<ol>
+<li><strong>The malfunction was a summons.</strong> The Rhan Fayr ("Those Who Watch") are billions of years old and live <em>in</em>, or <em>as</em>, the stars of the reach (deliberately ambiguous, per their own dialogue). They are being eaten by <strong>the Maw</strong>, an un-star at (25,175) that drinks starfire and vacuum energy: <strong>the Dimming</strong>. Dying, they seized the one young ship with a fold drive mid-fold and dragged it across the galaxy, burning out the drive and accelerating the Dimming with the effort. That is the game's opening "accident."</li>
+<li><strong>Why only the Vanguard can save them:</strong> every strength of the reach is <em>edible</em>. Kvoth minds are computation (drunk first), Ashkaru ships burn fuel (fire is food), Vel-ma-rah are warmth in thin skins, and 612 Kvoth probes plus an Ashkaru crusade of 900 ships all vanished. The Vanguard's <strong>zero-point core</strong> beats "on the far side of everywhere," her crew are six warm, brief, untasteable mortal minds, and her <strong>Fold Drive</strong> can be rebuilt as the delivery vehicle.</li>
+<li><strong>Finale:</strong> the Rhan Fayr rebuild the drive <em>around</em> an Ember of their fire. The player crosses the Long Dark by the Lodestar's pulse, reaches the Maw's throat, and engages the fold: the Ember ignites a newborn star inside the Maw, and the birth-surge throws the Vanguard home. One fold, two miracles.</li>
+</ol>
+
+<h2>Critical path (designer summary)</h2>
+
+<ol>
+<li>First contact (forced negotiation with the toll picket) → 100 M3 thorium toll → Transponder Ring. Optional: fighting or fleeing instead starts a ringless run (viable, harder; see the first-contact section below).</li>
+<li>Chart Core (500 CR); Kvoth rel ≥ 10 + Watchers topic → drone-wreck descent ellipse (~15 units about 40,158, center just clear of the dark; wreck at 38,165 just outside the Dimming's starting edge, the dark reaching it ~SD +1, found by canvassing systems) → Crystal Lodestar (id <code>resonance</code>).</li>
+<li>Stars-alive chain (class 3 scanner, 3 anomalies) → Johnson hypothesis → full Lodestar analysis (<code>resonanceRead</code>; answers to "Rhan Fayr", gives no bearing, and is the gate on finding/contacting the Veil at all).</li>
+<li>Ruin rumor (600 CR) → 100,70 / 60,80 / 160,130 (second planet each) → patrol the x=200 line deepward for the red star → vault at 200,160 → Pyramid Device → fluxes visible.</li>
+<li>Bazaar YELLOW CURIO (4,360 CR) → descrambler (opens the Ashkaru; not required for the critical path).</li>
+<li>Corsair Sunstone (20 M3 iridium or rare 1/50 drop) → return to Ashkaru → Humming Weaver → flux transit.</li>
+<li>Veil at 243,12 → scan + hail with Lodestar → SUBMIT TO JUDGMENT (virtue ≥ 4 keeps the way home).</li>
+<li>Long Dark → Maw throat (dist &lt; 70) → CAPTAIN &gt; FOLD DRIVE → finale + epilogue, read from virtue AT FOLD TIME: ≥ 8 BRIGHT (the Fold Drive is rebuilt and shared with every race of the New Empire; a golden age), ≥ 4 WORTHY (home, but the drive never fires again and the project is shelved — a thousand-year wait), &lt; 4 SUFFICIENT (the thin-report homecoming), <code>homeForfeit</code> THE REACH (exile, reach saved).</li>
+</ol>
+
+<h2>The clock (existential threat)</h2>
+
+<p>The game starts at <strong>SD 4640.1</strong> (<code>SF.START_SD</code>): twenty years after the heroes of Arth destroyed the Crystal Planet (Starflight 1, SD 4620; SF2 sits at 4638). One stardate is a year, and a full voyage runs <strong>≈4–6 stardates</strong> (the design target is a five-year voyage). <code>SF.DIM</code> in <code>js/data.js</code>: starts at radius 12 (ancient dead systems exist from turn one), grows 4.5 u/stardate, accelerating to 11 past radius 30 (the acceleration trips at <strong>SD +4.0</strong>, ≈ SD 4644.1).</p>
+
+<ul>
+<li><strong>Ashkar (Pyre Throne)</strong> at distance 33.6 dies at <strong>SD +4.3</strong> (≈ SD 4644.4), making the Sunstone/Ashkaru content the timed content. An efficient run that does the Sunstone before the vault reaches the living Pyre Throne; dawdlers fall back to refugee warbrands. <strong>Saving the Pyre outright</strong> is a speedrun feat: the judgment now requires the Lodestar FULLY ANALYZED (<code>resonanceRead</code>), and that analysis is a hard gate on finding or contacting the Veil at all — no longer merely an in-fiction compass. So a minimal run must fold in the stars-alive chain — toll, scanner 3, drone wreck, three anomalies, Veil, Maw direct — and still lands in ≈3.5–4 SD, before Ashkar falls. The moment Ashkar goes cold sets <code>flags.pyreFell</code> (independent of the heard-broadcast <code>evac_4</code>); the IGNITION ending page reads that one flag, and a run that kept it unset earns the tribute: the Ashkaru and their offspring sing war-hymns of praise for millennia of the ISS Vanguard that kept their Flame from the Dimming.</li>
+<li><strong>Corsair den</strong> at (110,185), dist ~86: just outside the doom radius, so the pocket survives to the endgame (the corsairs outlive the Ashkaru).</li>
+<li><strong>Game over</strong> ("the chorus fails") at radius 80 ≈ <strong>SD +8.5</strong> (≈ SD 4648.6).</li>
+<li>All quest-critical systems (ruins, vault, bazaar, Kvoth stations, Veil) sit outside radius 80, EXCEPT the <strong>drone wreck at 38,165</strong> (dist ~16 from the Maw, whose start radius is 12): it sits just outside the Dimming's starting edge, and the dark spreads over it around <strong>SD +1</strong>. Fetch it promptly and it's shallow — near the moving edge, a light taste of the dark; dawdle and it deepens (more drain), so retrieving the Lodestar late means a proper Maw-run's worth of shields/health. Either way it is always reachable, so the game stays completable — but the reach visibly dies around you. One flux ENDPOINT is also an exception: (55,140), dist 46.1 from the Maw, falls inside the Dimming around <strong>SD +5.5</strong>; transit still works, but the exit is in the dark.</li>
+<li><strong>Inside the Dimming</strong> (per second): shields drain 2, one random system of shd/wpn/sen drains 0.5 (floored at 20), life support drains 0.5 (0.15 with the Ember aboard). CLAUD, the engineer droid (Corrective Longeron Adjustment and Upkeep Droid), suspends ALL field repairs inside (systems, TV, armor regrowth; <code>SF.tickRepairs</code> early-returns) and announces the deferral on every entry and the resumption on every exit (<code>G.ship._dimDefer</code>), so life support is the real clock of the Long Dark. Shield recharge and the doctor keep working; they are not his.</li>
+<li>Station evacuations broadcast as they happen once the player knows of the Dimming or the star; nothing is silently swallowed. Sensors give Dr. Johnson's countdown estimates.</li>
+<li>Stardate flow: in-system flight 0.0006/s; deep-space THRUST <strong>0.015/s</strong> (0.9/min — the dominant cost), while drifting or sitting in menus costs only the 0.0006 trickle, so the clock punishes distance, never thinking. Surface time is deliberately cheap (0.0001/s plus 0.00005 per TV move, 0.005 per descent/return): mining a planet costs <strong>≈0.1–0.2 SD, one or two months</strong>; docking 0.01, medbay 0.01, encounters 0.0004/s. One stardate is a year. Tune <code>SF.DIM.base/accel/doom</code> for pacing.</li>
+<li><strong>The engine is the pacing item.</strong> Interstellar cost per 1,000 units: class 1 ≈ 3.3 SD, class 2 ≈ 2.5, class 3 ≈ 2.0, class 4 ≈ 1.6, class 5 ≈ 1.25 (0.015/s ÷ <code>ENGINE_SPD</code>), and random-encounter frequency also scales with real seconds spent moving. Against the +8.5 doom and ~2.3 SD of fixed story/surface costs, an optimal ~1,400-unit route totals ≈7.5 SD on class 1 (about one stardate of slack: tight, and a realistic class-1 run still overruns), ≈6.1 on class 2 (wins if you follow clues and don't dawdle), ≈5.4 on class 3 (the intended sweet spot — the five-year voyage), ≈4.8 on class 4 (its 6,400 CR costs ~0.7 SD of extra mining, roughly a wash), ≈4.3 on class 5 (12,000 CR costs more time to earn than it saves: a vanity drive). Fluxes are free transit and grow more valuable the slower the ship.</li>
+<li>The starmap always draws the Dimming's disc at its live radius (a starless region is plainly visible in any sky); only the label THE DIMMING waits for <code>flags.dimKnown</code>.</li>
+</ul>
+
+<h2>Virtue ledger (what the stars record)</h2>
+
+<p><strong>Temptation by design, the perfect crime:</strong> Vel-ma-rah caravels are trivially killable even with the starting class 1 laser (shield 12 / armor 28, unarmed) and their envelopes salvage 12–22 M3 of <strong>auralite</strong> (~600–1,000 CR); a corsair drink-yarn (<code>yarnAuralite</code>) pitches it as a get-rich-quick scheme. A destroyed caravel costs NO Vel-ma-rah standing, the clans keep greeting you warmly, and the Rhan Fayr's deed-recall opener skips these "quiet" deeds (<code>SF.deed(…, quiet)</code> / <code>d.q</code>), so the player seemingly gets away clean. Only a caravel that is fired upon and ESCAPES tells the tale (rel −50: "a caravel is singing to its clans"). The hidden bill lands at judgment, plus a dedicated Rhan Fayr passage ("the strong feeding on the gentle is the Hunger's own arithmetic. It does not come home with you").</p>
+
+<p><strong>The full temptation catalogue</strong> (all quiet: counted in virtue, never cited before judgment, no faction ever learns):</p>
+
+<ul>
+<li><em>Caravel murder</em> (above): auralite salvage; −2 fire on a non-hostile, −4 destroy a trader, −3 destroy it while fleeing, per incident.</li>
+<li><em>Whale butchery</em>: OPEN FIRE kills the whale (death-roll still hits for 40) → VOID-AMBERGRIS artifact (3,340 CR), quiet −3, repeatable.</li>
+<li><em>Plague-ship looting</em>: WAIT, THEN STRIP THE WRECK on the Ashkaru distress variant → 40 M3 iridium ("The Flame saw nothing. Nothing saw."), quiet −4 — twice the Sunstone's price in one dark hour. Mirror of the +2 doctor option on the same ship.</li>
+<li><em>Selling the courier</em>: with the rescued pod aboard, non-hostile corsairs offer SELL THE PASSENGER (3,000 CR), quiet −3; honest delivery pays 1,000 CR plus standing, so the markup on a life is exactly 2,000.</li>
+<li><em>Grave goods</em>: after each ruin translation, a niche menu (LEAVE THE DEAD BE / TAKE THE GRAVE-GOODS) → an ANCIENT SHARD (2,500 CR) per ruin, quiet −2. Leaving them earns NOTHING; good is unrewarded by design.</li>
+<li><em>Hymn intel</em>: with the descrambler, corsairs buy decrypted Ashkaru convoy songs (900 CR, once per encounter), quiet −2 each, and corsair hunters appear in mourning space (weight 0.15 × sales, cap 0.6).</li>
+<li><em>The contract</em>: after the auralite yarn, ASK FOR WORK → next caravel kill pays +400 CR and corsair rel +10, extra quiet −1 (premeditation).</li>
+</ul>
+
+<p><strong>Grace cannot be farmed:</strong> repeated good deeds of the same text diminish to nothing (×1, ×1, ×0.5, ×0.5, ×0.25, ×0.25, then ×0); sins never diminish. Unannounced in-game. There are NO reparations. Lives cannot be repaid; the ledger only ever moves forward.</p>
+
+<p><strong>Values:</strong> +3 return Sunstone (buying it peacefully carries no virtue — the ledger counts the return, not the receipt), +2 heal the plague ship, +1 parts/pod distress aids, +1 scan-don't-shoot the void-whale, +1 Ashkaru relic trust; −1 abandon distress (only charged when an aid option was actually possible; no titanium / full pod bay / dead doctor is misfortune, not sin), −2 fire on non-hostiles, −2 grave-robbing, −2 hymn intel, −3 whale butchery, −3 selling the courier, −3 destroy a fleeing ship, −4 destroy a Vel-ma-rah trader, −4 loot the plague ship, −1 contract premeditation.</p>
+
+<p><strong>Judgment:</strong> threshold 4. ANY caravel kill sets <code>flags.homeForfeit</code> regardless of the total; "it does not come home with you" is enforced, not just spoken. An entirely empty ledger gets its own condemnation (indifference casts a shadow too). The verdict text is delivered through the paged log flow (one console page per SPACE); deeds are recited at judgment and in the ending. The wanting ending: the surge parts around the ship ("She stays. As promised. As judged."), the epilogue is THE REACH instead of HOME, and the final verdict reads WANTING, YET THE REACH IS SAVED.</p>
+
+<h2>Deliberate opacity (hint design)</h2>
+
+<p>The game withholds explanations on purpose; the "aha" is the player's work:</p>
+
+<ul>
+<li>Awake stars visibly blink in the viewport, unremarked, and players dismiss it as a rendering artifact until the Vel-ma-rah legend (<code>clueVeil2</code>, Vel-ma-rah rel ≥ 30 + asking about the Watchers) recounts logging flickering stars as faulty sensors. The legend carries no location; the redirect at the blinking IS the content, plus the "phase-woven veil" name and the trade topic pointing at the Ashkaru relic ("unless you had something they want MORE").</li>
+<li>Ruin inscriptions are never translated: the journal records them verbatim, and once all three are found Lee observes only that the stones assemble into a course ("a number, two bearings, a color"). Deriving dawn = east (+x), deep = south (+y), and picking the red class-M star is entirely the player's job; the 1,500 CR <code>r_vault</code> rumor confirms only that the ruins spell a location. The SECOND coordinate is deliberately destroyed (ruin #2's palace wall is fused to glass where the count stood), so the course has a hole in it: the player must patrol the x = 200 line deepward looking for a red star. Two red stars sit near the corridor's deep end — the vault at 200,160 and a procedural class-M at ~208,165. The decoy is deliberate: checking the wrong red star first is part of the search.</li>
+<li>The descrambler is sold unlabeled ("YELLOW CURIO"); nobody in the reach ever names the device. Kvoth, Vel-ma-rah, and corsairs each only remark (in their <code>others</code> pools) that nobody knows whether Ashkaru hymning is even language. Johnson installs it with only a vague guess; the payoff is discovered live on the next hail. The Bazaar deliberately camouflages it among three decoy curios at similar four-digit prices (<code>SF.CURIO_PRICE</code>: descrambler 4,360, astrolabe 4,715, bell 4,085, stone 4,940 — fixed, arbitrary, and the descrambler deliberately neither cheapest nor dearest; all four resell at half their buy price): pure world-building junk whose analysis lines confirm their uselessness, and a real money trap for shelf gamblers. One designed nudge exists (<code>SF.descramblerNudge</code>): while the curio is aboard but unanalyzed, any live Ashkaru signal (first hail of an encounter, the plague ship's glyphs) makes it hum audibly and Johnson asks for bench time. Once installed, Gonsalves credits the whirring device whenever glyphs or hymns resolve, so the player always knows WHY they can read Ashkaru now.</li>
+<li>The Weaver (internal id <code>phasematrix</code>) arrives as a gift with no apparent function; Johnson calls it decorative. It <em>is</em> sellable (1,500 CR) before it is woven into the deflector grid — like the Lodestar and Sunstone, the three plot relics a fence will re-sell you at double what they paid (<code>SF.BUYBACK_RELICS</code>), so offloading one is recoverable but costly; once woven, it leaves the hold and is no longer loose cargo. With the Pyramid installed they note its hum shifts near fluxes, "filed under coincidence."</li>
+<li>The Kvoth trade line "A CHART CORE OF OUR SPHERE MAY BE PURCHASED AT ANY STATION" is knowingly false at the Pyre Throne (the forge sells no artifacts) and stays that way on purpose: it is the Lattice's point of view — to a ledger-mind, a station that stocks no knowledge barely counts as one. Characterization, not an error; do not "fix" it.</li>
+<li>The toll patrol sells passage and nothing else: the Transponder Ring is never mentioned before payment (it arrives as an unannounced "addendum"), and nobody warns that ringless ships are hostile targets across the whole Lattice. The player's first strategic call (pay / fight / flee) is made without full information, deliberately, and the consequences teach the faction system better than a warning would.</li>
+<li>The class 2 scanner's spec sheet ("Class 2 resolves surface structures from orbit") is shown at the purchase confirm step; the 1,600 CR upgrade is an informed early economic beat placed before the ruin chain.</li>
+<li>The plague ship states a risk that does not exist. Before the doctor crosses, Kercso warns that the blight could ride her suit back and take the Vanguard's crew, and a confirm menu (SEND HER / RECALL HER) forces the decision; mechanically the infection never spreads (her hp dips 10, floored at 40, nothing more). The right choice is meant to cost courage, not hull. The hull glyphs are the quarantine-exile lore: pre-descrambler the translator only guesses ("a quarantine mark, maybe, or a curse"); with the descrambler they read plainly ("CAST OUT, THAT THE FLAME STAY CLEAN").</li>
+</ul>
+
+<h2>First contact &amp; the toll picket</h2>
+
+<p><code>SF.FIRST_CONTACT</code> dialog tree: a lone <strong>Kvoth patrol picket</strong> (standard <code>kvothPatrol</code> stats: shield 70 / armor 100 / dmg 24 / engine 3, identical to later random patrols; drawn player-sized at (150,−90) on the system map) opens with <strong>ARCHIVAL</strong> (record the Vanguard to the ledger, then destroy it) and must be talked around (value/payment arguments win; threats draw a warning shot; insults cost rel). On the opening node the crew flags the two non-payment outs (Johnson: "we could perhaps take them"; Lee: "we run"). Every conversational path ends at the toll offer: <strong>100 M3 of thorium for passage</strong>, with a "WE DON'T HAVE ANY THORIUM" reply that surfaces the planet II deposits and the picket's willingness to wait. The ring is deliberately never mentioned before payment, nor is the without-it-all-Kvoth-are-hostile consequence: the player decides without full information, by design.</p>
+
+<p>The teaching triangle (learn the UI by choosing):</p>
+
+<ul>
+<li><strong>Pay</strong> (<code>paytoll</code>): −100 thorium → ring artifact, <code>flags.ring</code>, Kvoth rel ≥ 10, picket departs (<code>G.tollPicket = false</code>). The ring arrives as an unannounced addendum.</li>
+<li><strong>Fight</strong>: winnable, barely. First shot at ANY Kvoth vessel sets <code>flags.kvothFired</code>, permanently voiding the toll/ring path (plus −2 virtue / −50 rel if the target wasn't hostile yet). At starting kit (laser 9 dmg / armor 60 / hull 100 vs. the patrol's 170-point pool and 24-dmg volleys) the fight runs ~35 s and lands 5–7 hits on the Vanguard; EVASIVE PATTERN halves incoming fire and is the intended margin. The patrol may break off below 25% armor and escape.</li>
+<li><strong>Flee</strong>: BREAK OFF (FLEE) against the picket succeeds at a flat <strong>0.35</strong> per try (<code>fleeChance</code> on the picket's cloned ship def — a picket holds station rather than chase; the engine-difference formula would give 0.1); each failure grants the patrol an immediate point-blank volley. Success simply removes the picket (<code>G.tollPicket = false</code>): no pursuit, no special state; the system can be mined, explored, and left normally, with the usual Kvoth-sphere random encounters resuming.</li>
+</ul>
+
+<p>Containment and patience: while the picket waits (<code>G.tollPicket</code>), flying past the system boundary is intercepted and restarts the encounter, and random encounters are suppressed in the start system. Half a stardate after the toll is assessed (<code>flags.tollDeadline</code>) the picket breaks station and departs, toll unpaid — unless thorium sits in the ship's hold or the TV bay, which reads as compliance in progress and pins it in place. (0.5 SD is six months in fiction and roughly 20 minutes of active flight; with the compliance freeze, missing the deadline means ignoring the toll, and is a soft branch, not a fail state.) The picket refuses all chit-chat (re-hailing repeats the invoice plus the planet II hint); ending the encounter repositions the ship outside the re-trigger radius (<code>SF.PICKET</code>: position, trigger radius 55, stand-off 70). The forced encounter itself has one definition, <code>SF.story.picketEncounter()</code>, shared by its four trigger sites, and the toll amount is the constant <code>SF.TOLL</code>.</p>
+
+<p>The ringless back door: any later Kvoth patrol encounter offers PAY THE TOLL while <code>!ring &amp;&amp; !kvothFired</code>, enabled only with 100 M3 of thorium already aboard (they never wait). Fled-but-never-fired players can therefore still buy the ring from the ships hunting them; anyone who fired cannot, ever.</p>
+
+<h2>Encounters &amp; dialogue</h2>
+
+<ul>
+<li><strong>Races:</strong> Kvoth (lithoid cybernetic ledger-minds; posture: friendly, buy radioactives, sell defense), Vel-ma-rah (gasbag traders; rumors, pods, charts), Ashkaru (dying-sun zealot-poets; posture: hostile(!), sell weapons), corsairs (pirates; tribute or fight), Rhan Fayr (the stars). Starting rel: kvoth −20, velmarah +10, ashkaru −10 (wary — warbrands measure strangers rather than shoot on sight; four bold challenge answers reach the rel ≥ 10 Pyre docking bar), corsair −60 (hostile until tributes).</li>
+<li><strong>Who knows what about the Sunstone:</strong> only the Ashkaru name it (THE SUNSTONE, the heart of their dying sun). The corsairs brag about "the glowing rock", know exactly what it is worth, and refuse credits for it: iridium only, metal in the hold. The Vel-ma-rah know only that corsairs stole some trinket the Ashkaru weep fire over. The Kvoth know nothing; the one buyback attempt the Ashkaru retell was the counting-engines pricing a relic they never understood. The neutral catalog/journal voice may name it once the stone is aboard and identified.</li>
+<li><strong>Comms patience:</strong> each encounter allows 2–5 statements/questions (the opening hail is free) before the contact signs off and the channel closes for that encounter, so gathering a culture's full dialogue takes several meetings. The Veil (Rhan Fayr finale) is exempt.</li>
+<li><strong>Race gambits</strong> (<code>SF.GAMBITS</code> in data.js, each culture's social key):
+  <ul>
+  <li><em>Kvoth: data is currency.</em> Once per encounter, after your first question, they fire a reciprocal query with 3 answers. The precise/honest one: +2 rel and +1 patience; evasive/boastful: −2 rel. Good option position varies per query.</li>
+  <li><em>Vel-ma-rah: stories are currency.</em> SHARE A STORY comms option; 6 stories drawn from the player's actual voyage flags (fold/arth always; whale, toll-haggle, Maw, Veil-contact gated). Each tells once ever: +3 rel, +1 patience.</li>
+  <li><em>Ashkaru: fire is currency.</em> On the first hail of a non-friendly encounter (post-descrambler) they throw a challenge: bold answer +3 rel and stands a HOSTILE warbrand down to wary (mid-combat de-escalation); plain +1; meek −3. The safe-sounding diplomatic answers are the meek ones.</li>
+  <li><em>Corsairs: credits are currency.</em> STAND A ROUND (30 CR): +1 patience, +1 rel, and a yarn (4 once-gated tales first, then repeatable drunk chatter).</li>
+  <li><em>Rhan Fayr: deeds are currency.</em> Before answering your first question each conversation, they cite your most recent actual deed from <code>G.deeds</code> (good/bad/empty template pools). Postures don't move them at all.</li>
+  <li>Posture reactions are data-driven (<code>SF.GAMBITS[race].posture</code>), fire once per encounter: matching <code>posturePref</code> +2 rel; wrong postures draw an in-voice reaction, some at −2.</li>
+  </ul>
+</li>
+</ul>
+
+<h2>Combat</h2>
+
+<p>Menu rounds; hostiles fire every ~3.5 s even mid-conversation. Player weapons cycle (laser 1.5 s, missile 2.5 s + 6 s tube reload), the combat menu rebuilds after every shot so cooldown states stay honest, and held ENTER is ignored (no key-repeat machine-gunning). Fleeing works (engine class vs theirs, unless the ship def pins the odds — the toll picket carries <code>fleeChance: 0.35</code>), but a failed flee hands the enemy an immediate point-blank volley. Retries cost blood, so engine class matters.</p>
+
+<h2>Fluxes</h2>
+
+<p>Endpoints (150,80)↔(55,140), (185,35)↔(92,122), (30,30)↔(236,18). Invisible + inert without the Pyramid. Three keys to transit: Pyramid to SEE, Weaver to be ADMITTED, raised shields to SURVIVE.</p>
+
+<ul>
+<li>Bare hull: bounce + 8 dmg.</li>
+<li>Uninstalled Weaver with shields down: bounce + CLAUD hint ("it reached for the deflector grid").</li>
+<li>Weaver aboard with shields raised: it weaves itself through the live deflector grid (sets <code>flags.phasematrix</code>), granting admission from then on.</li>
+<li>Woven veil with shields down: the ship is admitted and folds wrong. Game over ("ENS. LEE had asked for shields").</li>
+</ul>
+
+<p>Lee advises shields on first charting (<code>whAdvice</code>) and the hint bar warns within 5 units of a flux when shields are down. The Weaver only gates flux transit; the Veil itself is reachable by direct flight, so nothing endgame-critical is lost if the Weaver is missed.</p>
+
+<p>Discovery: with the Pyramid installed, a flux becomes visible in the viewport within scanner range (14/26/42 units by scanner class, halved with shields up); touching either mouth charts BOTH ends on the starmap. Only the 30,30↔236,18 pair has lore anchors, one per mouth: the Veil legend's "door in nothing, near a star no chart will hold" (the 236,18 end) and the corsair drink-yarn <code>yarnDeadMen</code>, a ghost story naming "dead men's coordinates" at 30,30 where crews found NOTHING and never returned. The story is true and misunderstood: without the Pyramid there is nothing to find there, and the door chewed the unveiled crews, exactly as the Vel-ma-rah legend warns. The yarn writes the coordinates to the journal. The other two pairs are pure Pyramid exploration.</p>
+
+<h2>Economy &amp; equipment</h2>
+
+<p>Start: 60 CR, class 1 survey laser, shield 0. Loop: mine → sell at premium stations → upgrades (engines, shields, armor, lasers, missiles, pods, scanners). Kvoth pay 1.7× for radioactives. Kvoth yards cap engines/shields/ armor at <strong>class 3</strong> (cargo pods still to max); everything above class 3 is forged only at the Pyre Throne (descrambler + rel ≥ 10 to dock; both cultures' trade lines hint at it), making top hardware timed content that dies with Ashkar. Vel-ma-rah yards silently omit scanners above class 2. <strong>The explorer's economy:</strong> establishing an orbit records a survey entry (<code>G.surveyed</code>, <code>'star:idx'</code> → 1 unsold / 2 sold); Kvoth stations buy the backlog in one batch (<code>SF.surveyValue</code>). Price per planet (<code>SF.surveyPrice</code>): 0 inside the Kvoth sphere (never recorded — already on file), else <code>clamp(30 + (d − 45) × 0.7, 30, 100)</code> where d is the star's distance from KV Prime (118,92) — the rim of the map pays the 100 cap. Xenobiology data sells at <strong>150 CR per catalogued entry</strong> (a void-whale scan is 2 entries). Together a dedicated wanderer earns ~3–5k CR per stardate — enough to ladder engines without rivaling mining or piracy, which keeps the Dimming's clock honest for explorers.</p>
+
+<p>Station repairs cost need×25; upgrade prices doubled with the bigger-planet economy. <strong>The Bazaar's shield shelf</strong> goes to class 4 (10,000 CR) — a deliberate money trap: mechanically class 2–3 suffices for everything, and the 10k is ~1.2 SD of mining fed to the Dimming. The Bazaar also stocks a <strong>class 1 missile launcher</strong> (1,800 CR) — the earliest weapons buy in the reach for war-path players, since the Kvoth refuse to sell arms and the forge/black-market sources come later. <strong>Black market:</strong> non-hostile corsair encounters sell lasers and missiles at 1.5× the Ashkaru forge price, the weapons source that survives the Pyre's death. Tribute raises corsair rel by +15 (capped at 0), so two or three tributes buy a conversation. The black market also fences <strong>scanners</strong> (to class 3, 1.5×), so a run that has burned the Kvoth entirely is never locked out of the stars-alive chain — the Pyre forge stocks scanners too, while it stands. Maxing every upgrade track is a mathematically guaranteed loss (~120k CR ≈ 13–15 SD of grinding vs. the +8.5 doom, and the Pyre-exclusive tiers alone exceed what can be earned before +4.3): triage is the economy's whole point.</p>
+
+<h2>Discovery gates (scanners &amp; surface structures)</h2>
+
+<ul>
+<li><strong>Star scans:</strong> class 1 sees nothing; class 2 yields Johnson logging an "equipment malfunction", the exact reading the Vel-ma-rah got; class 3 (sold by the Kvoth, the Pyre forge, and the corsair black market at 1.5×) resolves the anomaly chain. Awake stars are ~1 in 6; the anomaly threshold is 3; scanning the rare Watcher drone encounter counts with no scanner gate. When the hypothesis lands with the Lodestar aboard but not yet fully read, Johnson explicitly asks to re-analyze it (<code>SF.story.lodestarNudge</code>) — the connective hint for blind players who analyzed it early and got the "nothing habitable" dead end.</li>
+<li><strong>Surface structures:</strong> all sites (ruins, vault, drone wreck, debris) require a <strong>class 2+ scanner</strong> to appear on the orbital landing map and the surface minimap, and Dr. Johnson only reports "Anomaly detected on the surface" in the orbit sensor readout at class 2+. Class 1 cannot resolve them, though the structure itself is still drawn in the TV's viewport and remains interactable, so blind discovery is possible, just impractical on a 384×240 map.</li>
+</ul>
+
+<h2>Planets &amp; world generation</h2>
+
+<p>Deterministic galaxy from master seed 0xC0FFEE, regenerated at boot, never stored in the save. Surfaces are 384×240 tiles (Starflight scale, ~6×6 view-screens) with multi-scale terrain (12 continent blobs r45–95, 70 regional, 340 detail) and ~45–70 deposits per world (density is LOW by design; the orbital blip scan decides landing sites). The starting system's planet II is special-cased: its thorium is a fixed <strong>134 M3 budget</strong> (a handful of 8–18 M3 deposits placed after the normal table roll, which is itself diverted away from thorium there), so the toll leaves only a 34 M3 margin. The orbital map and TV minimap render from an offscreen 1px-per-tile canvas cached per planet + cold state (<code>SF.surfMapCanvas</code>). Landing crosshair moves ×8 with SHIFT; hazard interval widened for longer excursions. The TV bay holds 50 M3; mining a deposit larger than the bay leaves the remainder in the deposit (persisted in <code>G.partial</code>). CAPTAIN &gt; JETTISON CARGO dumps any element in chosen amounts (quantity selector). The starting system's planet II thorium budget is <code>SF.TOLL + 34 = 134 M3</code>, so it tracks the toll automatically if retuned.</p>
+
+<h2>Space population (spheres, beacons, refugees)</h2>
+
+<ul>
+<li><strong>Spheres of influence:</strong> charted by flying into them; the Kvoth Sphere is the exception and never charts by traffic until the toll is paid (<code>flags.ring</code>), since before the ring Kvoth ships are hunters, not commerce. It charts moments after payment, because the start system sits inside it. (Kvoth Sphere r45, Vel-ma-rah Trade Lanes r20 around the Gilded Reach, Ashkaru Space r30, Corsair Pocket r18 at 110,185), then drawn dashed on the starmap; a sphere disappears when its home star dies. Inside the trade lanes, encounters are busier and mostly caravels, with a cut of corsairs hunting them.</li>
+<li><strong>Distress beacons spawn where the traffic is:</strong> open reach 0.16, Kvoth Sphere 0.15, Corsair Pocket 0.15 (fresh victims), trade lanes 0.10; Ashkaru space never (mourning space stays hostile and silent). Each beacon rolls one of three variants (caravel needing parts / escape pod / Ashkaru plague ship); the plague ship appears at most 3 times per voyage (<code>G.plagueCount</code>), after which only the first two variants roll. Plague ships are quarantine exiles, cast out of mourning space so the blight never touches the Pyre, which is why they drift everywhere EXCEPT Ashkaru space (which has no beacons at all). The Kvoth Sphere and trade-lane shares matter: the two circles overlap (centers ~60 apart, radii 45+20), so the early thorium→Bazaar loop never touches open reach. Without them a settled player would meet no beacons at all, starving the main early Vel-ma-rah rep source (+8 per delivered pod).</li>
+<li><strong>Refugee fleets:</strong> when Ashkar dies (SD +4.3), Ashkaru warbrands join the open-space encounter table (weight 0.18), so the Sunstone return (and with it the Humming Weaver) remains possible via ship encounters after the Pyre Throne is gone. The same mechanism stands by for the corsairs (weight +0.12) if the den ever dies.</li>
+</ul>
+
+<h2>Shields &amp; sensors</h2>
+
+<p>Raised shields halve sensor detection range (<code>SF.scanRange</code>), making up/down a real explore-vs-danger decision; recharge is otherwise free. Dimming-dead worlds have no scannable surface life.</p>
+
+<h2>Files</h2>
+
+<p><code>util</code> (RNG/audio) → <code>ui</code> → <code>data</code> (all content/dialogue) → <code>galaxy</code> (deterministic worldgen, seed 0xC0FFEE) → <code>game</code> (state/loop) → <code>space</code> / <code>surface</code> / <code>encounter</code> / <code>station</code> / <code>story</code> (modes).</p>
+
+</div>
+</details>
+
+</div>
+</body>
+</html>
