@@ -76,7 +76,7 @@ SF.modes.title = {
     c.fillStyle = SF.P.cyan;
     c.fillRect(l.x, 236, l.w, 1);
     this.menu.draw(SF.L.W / 2 - 140, 300, 280, null);
-    SF.ui.ctext(SF.L.W / 2, SF.L.H - 96, 'FLORIAN KÖLLICH · florian@koellich.com', SF.P.dgray);
+    SF.ui.ctext(SF.L.W / 2, SF.L.H - 96, '© 2026 FLORIAN KÖLLICH · florian@koellich.com', SF.P.dgray);
     SF.ui.ctext(SF.L.W / 2, SF.L.H - 78, 'GNU GPL v3 · github.com/koellich/starfold', SF.P.dgray);
     SF.ui.ctext(SF.L.W / 2, SF.L.H - 60, 'NOT AFFILIATED WITH ELECTRONIC ARTS · ALL TRADEMARKS BELONG TO THEIR RESPECTIVE OWNERS', SF.P.dgray);
     SF.ui.ctext(SF.L.W / 2, SF.L.H - 40, 'ARROWS + ENTER', SF.P.dgray);

@@ -3,18 +3,18 @@
 
 // ---- minerals ---------------------------------------------------------------
 SF.ELEMENTS = [
-  { id: 'iron',     name: 'IRON',     val: 2,  color: SF.P.brown,   w: 30 },
-  { id: 'nickel',   name: 'NICKEL',   val: 3,  color: SF.P.lgray,   w: 22 },
-  { id: 'lead',     name: 'LEAD',     val: 3,  color: SF.P.dgray,   w: 18 },
-  { id: 'copper',   name: 'COPPER',   val: 4,  color: SF.P.red,     w: 16 },
-  { id: 'cobalt',   name: 'COBALT',   val: 6,  color: SF.P.lblue,   w: 12 },
-  { id: 'titanium', name: 'TITANIUM', val: 8,  color: SF.P.white,   w: 10 },
-  { id: 'silver',   name: 'SILVER',   val: 10, color: SF.P.lgray,   w: 8 },
-  { id: 'thorium',  name: 'THORIUM',  val: 12, color: SF.P.lgreen,  w: 7 },
-  { id: 'gold',     name: 'GOLD',     val: 18, color: SF.P.yellow,  w: 5 },
-  { id: 'platinum', name: 'PLATINUM', val: 25, color: SF.P.lcyan,   w: 3 },
-  { id: 'iridium',  name: 'IRIDIUM',  val: 30, color: SF.P.lmagenta,w: 2 },
-  { id: 'auralite', name: 'AURALITE', val: 45, color: SF.P.lred,    w: 1 }
+  { id: 'iron',     name: 'IRON',     val: 2,  color: SF.P.brown },
+  { id: 'nickel',   name: 'NICKEL',   val: 3,  color: SF.P.lgray },
+  { id: 'lead',     name: 'LEAD',     val: 3,  color: SF.P.dgray },
+  { id: 'copper',   name: 'COPPER',   val: 4,  color: SF.P.red },
+  { id: 'cobalt',   name: 'COBALT',   val: 6,  color: SF.P.lblue },
+  { id: 'titanium', name: 'TITANIUM', val: 8,  color: SF.P.white },
+  { id: 'silver',   name: 'SILVER',   val: 10, color: SF.P.lgray },
+  { id: 'thorium',  name: 'THORIUM',  val: 12, color: SF.P.lgreen },
+  { id: 'gold',     name: 'GOLD',     val: 18, color: SF.P.yellow },
+  { id: 'platinum', name: 'PLATINUM', val: 25, color: SF.P.lcyan },
+  { id: 'iridium',  name: 'IRIDIUM',  val: 30, color: SF.P.lmagenta },
+  { id: 'auralite', name: 'AURALITE', val: 45, color: SF.P.lred }
 ];
 SF.EL = {}; SF.ELEMENTS.forEach(e => SF.EL[e.id] = e);
 
@@ -117,39 +117,29 @@ SF.installedArtifact = id =>
 // the three plot relics a fence will re-sell you (at double) if you offloaded
 // them — a safety net so selling the Lodestar/Weaver/Sunstone is never a
 // permanent mistake. `flags.sold_<id>` is set on sale, cleared on buy-back.
-SF.BUYBACK_RELICS = ['resonance', 'phasematrix', 'sunstone'];
+SF.BUYBACK_RELICS = ['resonance', 'phasematrix', 'sunstone', 'pyramid'];
 
 // ---- races ------------------------------------------------------------------
 SF.RACES = {
   kvoth: {
     name: 'KVOTH', color: SF.P.lcyan,
-    shipName: { patrol: 'KVOTH PATROL LATTICE' },
     posturePref: 'friendly', // plain and open; they scorn both threats and groveling
-    desc: 'Cybernetic lithoids. Rational, unemotional, precise.'
   },
   velmarah: {
     name: 'VEL-MA-RAH', color: SF.P.yellow,
-    shipName: { trader: 'VEL-MA-RAH CARAVEL' },
     posturePref: 'friendly',
-    desc: 'Nomadic gas-sack merchants. Gossips, gluttons for stories.'
   },
   ashkaru: {
     name: 'ASHKARU', color: SF.P.lred,
-    shipName: { raider: 'ASHKARU WARBRAND' },
     posturePref: 'hostile', // they respect fire and boldness
-    desc: 'Zealot warrior-poets of a dying red sun.'
   },
   corsair: {
     name: 'CORSAIRS', color: SF.P.lmagenta,
-    shipName: { cutter: 'CORSAIR CUTTER' },
     posturePref: 'hostile',
-    desc: 'Renegades of a dozen species. They serve only the take.'
   },
   rhanfayr: {
     name: 'RHAN FAYR', color: SF.P.white,
-    shipName: { watcher: 'UNKNOWN VESSEL' },
     posturePref: 'friendly',
-    desc: 'Those Who Watch.'
   }
 };
 

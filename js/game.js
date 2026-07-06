@@ -4,12 +4,13 @@
 SF.modes = {};
 SF.mode = null;
 SF.G = null;
-SF.SAVE_KEY = 'starfold_save_v1';
+SF.SAVE_V = 1;                                   // save-shape version — bump on any breaking change
+SF.SAVE_KEY = 'starfold_save_v' + SF.SAVE_V;      // key and stored `v` both derive from it
 
 // ---- new game -----------------------------------------------------------------
 SF.newGame = function () {
   SF.G = {
-    v: 1,
+    v: SF.SAVE_V,
     stardate: SF.START_SD,
     px: 125, py: 100, insys: 0, sx: 60, sy: 120,
     ship: {
@@ -64,17 +65,25 @@ SF.hasSave = function () {
 SF.load = function () {
   try {
     const d = JSON.parse(localStorage.getItem(SF.SAVE_KEY));
-    if (d && d.v === 1) { SF.G = d; return true; }
+    if (d && d.v === SF.SAVE_V) { SF.G = d; return true; }
   } catch (e) {}
   return false;
 };
 
+// ---- shared state helpers --------------------------------------------------------
+// the ship's sector-space position: an in-system star's coords, else deep-space px/py
+SF.shipPos = function () {
+  const G = SF.G;
+  return G.insys !== null ? { x: SF.galaxy.stars[G.insys].x, y: SF.galaxy.stars[G.insys].y } : { x: G.px, y: G.py };
+};
+// adjust a race's reputation, always clamped to [-100, 100]
+SF.addRel = function (race, delta) { SF.G.rel[race] = SF.clamp(SF.G.rel[race] + delta, -100, 100); };
+// ship-subsystem display names (damage report, repair notices, engineer report)
+SF.SYS_NAMES = { eng: 'ENGINES', shd: 'SHIELD GEN', wpn: 'WEAPONS', sen: 'SENSORS', life: 'LIFE SUPPORT' };
+
 // ---- cargo -----------------------------------------------------------------------
 SF.cargoMax = () => 200 + SF.G.ship.pods * 100;
-SF.cargoUsed = function () {
-  let s = 0; for (const k in SF.G.cargo) s += SF.G.cargo[k];
-  return Math.round(s);
-};
+SF.cargoUsed = () => Math.round(SF.sumMap(SF.G.cargo));
 SF.addCargo = function (el, amt) {
   const free = SF.cargoMax() - SF.cargoUsed();
   const take = Math.min(free, amt);
@@ -135,12 +144,15 @@ SF.takeDamage = function (dmg) {
     const keys = ['eng', 'shd', 'wpn', 'sen', 'life'];
     const k = keys[Math.floor(Math.random() * keys.length)];
     sh.sys[k] = Math.max(0, sh.sys[k] - dmg * 1.5);
-    if (sh.sys[k] < 50) msg.push({ eng: 'ENGINES', shd: 'SHIELD GEN', wpn: 'WEAPONS', sen: 'SENSORS', life: 'LIFE SUPPORT' }[k] + ' DAMAGED');
-    // crew injury chance
+    if (sh.sys[k] < 50) msg.push(SF.SYS_NAMES[k] + ' DAMAGED');
+    // crew injury chance (only the living can be freshly wounded)
     if (Math.random() < 0.3) {
-      const c = SF.G.crew[Math.floor(Math.random() * SF.G.crew.length)];
-      c.hp = Math.max(0, c.hp - (10 + Math.random() * 25));
-      msg.push(c.role + ' INJURED');
+      const alive = SF.G.crew.filter(c => c.hp > 0);
+      if (alive.length) {
+        const c = alive[Math.floor(Math.random() * alive.length)];
+        c.hp = Math.max(0, c.hp - (10 + Math.random() * 25));
+        msg.push(c.role + ' INJURED');
+      }
     }
   }
   SF.sfx.hit();
@@ -156,16 +168,20 @@ SF.tickRepairs = function (dt) {
   if (sh.shieldsUp && sh.sys.shd > 20) {
     sh.shieldPts = Math.min(SF.SHIELD_PTS[sh.shield], sh.shieldPts + dt * 4 * (sh.sys.shd / 100));
   }
-  // the doctor works whether or not CLAUD does
+  // the doctor works whether or not CLAUD does, worst-injured first (as the
+  // manual TREAT does), and can treat themselves
   const doc = G.crew[5];
-  if (doc.hp > 0) for (const c of G.crew) if (c !== doc && c.hp > 0 && c.hp < 100) { c.hp = Math.min(100, c.hp + dt * 0.4); break; }
+  if (doc.hp > 0) {
+    let worst = null;
+    for (const c of G.crew) if (c.hp > 0 && c.hp < 100 && (!worst || c.hp < worst.hp)) worst = c;
+    if (worst) worst.hp = Math.min(100, worst.hp + dt * 0.4);
+  }
   const eng = G.crew[3];
   if (eng.hp <= 0) return;
   // inside the Dimming decay outpaces him: CLAUD defers all field work
   // (space.js announces the deferral on every entry and exit)
-  const px = G.insys !== null ? SF.galaxy.stars[G.insys].x : G.px;
-  const py = G.insys !== null ? SF.galaxy.stars[G.insys].y : G.py;
-  if (SF.inDark(px, py)) return;
+  const p = SF.shipPos();
+  if (SF.inDark(p.x, p.y)) return;
   const rate = dt * 0.475;
   let busy = false;
   // "restored" is only worth reporting after a real dip: under the Dimming's
@@ -179,7 +195,7 @@ SF.tickRepairs = function (dt) {
       sh.sys[k] = Math.min(100, sh.sys[k] + rate);
       if (sh.sys[k] >= 100 && sh._ann[k]) {
         delete sh._ann[k];
-        SF.log('CLAUD: ' + ({ eng: 'ENGINES', shd: 'SHIELD GEN', wpn: 'WEAPONS', sen: 'SENSORS', life: 'LIFE SUPPORT' })[k] + ' RESTORED TO SPEC.', SF.P.lcyan);
+        SF.log('CLAUD: ' + SF.SYS_NAMES[k] + ' RESTORED TO SPEC.', SF.P.lcyan);
       }
       busy = true;
       break; // one system at a time

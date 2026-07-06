@@ -5,7 +5,7 @@ SF.TV_CAP = 50;
 
 SF.modes.surface = {
   star: null, planet: null, surf: null,
-  tx: 0, ty: 0, menu: null, moveCd: 0, hazardT: 0, lifeT: 0,
+  tx: 0, ty: 0, menu: null, hazardT: 0, lifeT: 0,
 
   enter(arg) {
     const G = SF.G;
@@ -34,7 +34,7 @@ SF.modes.surface = {
 
   minedKey() { return this.planet.star + ':' + this.planet.idx; },
   isMined(i) { return (SF.G.mined[this.minedKey()] || []).includes(i); },
-  tvUsed() { let s = 0; for (const k in SF.G.tvCargo) s += SF.G.tvCargo[k]; return Math.round(s); },
+  tvUsed() { return Math.round(SF.sumMap(SF.G.tvCargo)); },
 
   key(k) {
     const G = SF.G;
@@ -75,7 +75,7 @@ SF.modes.surface = {
       const nx = (this.tx + dx + SF.SURF_W) % SF.SURF_W;
       const ny = SF.clamp(this.ty + dy, 1, SF.SURF_H - 2);
       const t = this.surf.tiles[ny * SF.SURF_W + nx];
-      if (t === 0 && ['ocean', 'garden', 'molten'].includes(this.planet.type)) {
+      if (t === 0 && SF.LIQUID_TYPES.includes(this.planet.type)) {
         if (this.planet.type === 'molten') { SF.log('LAVA. The TV politely refuses.', SF.P.lred); SF.sfx.deny(); }
         else { SF.log('Open water. The TV is many things; a boat is not one of them.'); SF.sfx.deny(); }
         return;
@@ -189,7 +189,7 @@ SF.modes.surface = {
   draw() {
     const L = SF.L;
     const cold = SF.starCold(this.star);
-    const cols = cold ? ['#232838', '#39415c', '#4a5578', '#5a6a94'] : SF.PLANET_TYPES[this.planet.type].colors;
+    const cols = cold ? SF.COLD_COLORS : SF.PLANET_TYPES[this.planet.type].colors;
     SF.ui.clipView(c => {
       const tw = 10, th = 10;
       const vw = Math.floor(L.vw / tw), vh = Math.floor(L.vh / th);

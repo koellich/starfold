@@ -58,11 +58,11 @@ SF.ui.box = function (x, y, w, h, opt) {
 
 // ---- menu widget ------------------------------------------------------------
 // items: [{label, value, disabled, color}]
-SF.Menu = function (items, opts) {
+SF.Menu = function (items) {
   this.items = items;
   this.i = 0;
-  this.opts = opts || {};
   while (this.items[this.i] && this.items[this.i].disabled) this.i++;
+  if (this.i >= this.items.length) this.i = 0;   // every item disabled: keep a valid index
 };
 SF.Menu.prototype.key = function (k) {
   const n = this.items.length;
@@ -138,7 +138,7 @@ SF.logLines = [];
 SF.logOff = 0;    // scrollback offset in lines; 0 = pinned to the newest line
 SF.logSeen = 0;   // rows the player has had on screen: the read-guarantee cursor
 SF.logUnseen = () => SF.logLines.length - SF.logSeen;
-SF.logClear = function () { SF.logLines.length = 0; SF.logOff = 0; SF.logSeen = 0; };
+SF.logClear = function () { SF.logLines.length = 0; SF.logOff = 0; SF.logSeen = 0; SF.flowQ = null; };
 SF.logTrim = function () {
   if (SF.logLines.length <= 400) return;
   const cut = SF.logLines.length - 400;

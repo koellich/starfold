@@ -23,7 +23,9 @@ SF.deliverLine = function (race, topic) {
   const line = SF.getDialogLine(race, topic);
   SF.sfx.comm();
   SF.log(SF.RACES[race].name + ': ' + line.text, SF.RACES[race].color);
-  if (topic === 'anomaly' && !SF.G.flags.dimKnown) {
+  // only the Kvoth anomaly line gives the epicenter; other races give flavour
+  // that must not de-cloak the Maw or unlock the Maw/scar rumors
+  if (topic === 'anomaly' && race === 'kvoth' && !SF.G.flags.dimKnown) {
     SF.G.flags.dimKnown = true;
   }
   if (line.journal) SF.journal(line.journal);
@@ -57,17 +59,17 @@ SF.modes.encounter = {
   eShield: 0, eArmor: 0, menu: null, menuTitle: '', onPick: null,
   posture: 'friendly', hailed: false, postureReacted: false,
   playerFired: false, enemyFleeing: false, fleeT: 0, fireT: 0, evading: false,
-  missileCd: 0, over: false, whaleAngry: false, commBudget: 0, channelClosed: false,
+  missileCd: 0, over: false, commBudget: 0, channelClosed: false,
   gambitDone: false,
 
   enter(opts) {
     this.scripted = opts.scripted || null;
     this.playerFired = false; this.enemyFleeing = false; this.hailed = false;
     this.postureReacted = false; this.over = false; this.evading = false;
-    this.whaleAngry = false; this.fireT = 4; this.missileCd = 0;
+    this.fireT = 4; this.missileCd = 0;
     this.commBudget = 2 + Math.floor(Math.random() * 4); this.channelClosed = false;
     this.gambitDone = false; this.enemyDead = false; this.intelSoldNow = false;
-    this.wpnCd = 0;
+    this.wpnCd = 0; this.posture = 'friendly';   // reset per encounter (don't carry the last one over)
     const G = SF.G;
 
     if (this.scripted === 'distress') {
@@ -267,7 +269,7 @@ SF.modes.encounter = {
       SF.sfx.laser();
       SF.log('A beam as wide as a city block crosses the bow, close enough to blister the paint. ' + SF.takeDamage(6), SF.P.lred);
     }
-    if (node.act === 'scorn') G.rel.kvoth = Math.max(-100, G.rel.kvoth - 5);
+    if (node.act === 'scorn') SF.addRel('kvoth', -5);
     if (node.act === 'toll') {
       if (!G.flags.kvothKnown) {
         SF.log('THE VESSEL: FOR THE RECORD: WE ARE KVOTH. ENTER THE NAME CORRECTLY. IT WILL APPEAR ON YOUR INVOICES.', SF.P.lcyan);
@@ -309,7 +311,6 @@ SF.modes.encounter = {
 
   // the Kvoth interrogate back: one reciprocal query per encounter, precision rewarded
   kvothQuery() {
-    const G = SF.G;
     this.gambitDone = true;
     const pool = SF.GAMBITS.kvoth.queries;
     const q = pool[Math.floor(Math.random() * pool.length)];
@@ -320,8 +321,8 @@ SF.modes.encounter = {
       SF.log('YOU: ' + o.t, SF.P.white);
       SF.sfx.comm();
       SF.log('KVOTH: ' + o.reply, SF.P.lcyan);
-      if (o.good) { G.rel.kvoth = Math.min(100, G.rel.kvoth + 2); this.commBudget++; }
-      else G.rel.kvoth = Math.max(-100, G.rel.kvoth - 2);
+      if (o.good) { SF.addRel('kvoth', 2); this.commBudget++; }
+      else SF.addRel('kvoth', -2);
       this.commsMenu();
     });
   },
@@ -329,7 +330,6 @@ SF.modes.encounter = {
   // the Ashkaru test strangers: match their fire or be ash. A bold answer can
   // stand a hostile warbrand down mid-fight.
   challenge() {
-    const G = SF.G;
     this.gambitDone = true;
     const pool = SF.GAMBITS.ashkaru.challenges;
     const ch = pool[Math.floor(Math.random() * pool.length)];
@@ -341,10 +341,10 @@ SF.modes.encounter = {
       SF.sfx.comm();
       SF.log('ASHKARU: ' + o.reply, SF.P.lred);
       if (o.kind === 'bold') {
-        G.rel.ashkaru = Math.min(100, G.rel.ashkaru + 3);
+        SF.addRel('ashkaru', 3);
         if (this.dispo === 'hostile') { this.dispo = 'wary'; SF.log(SF.GAMBITS.ashkaru.standdown, SF.P.lgray); }
-      } else if (o.kind === 'meek') G.rel.ashkaru = Math.max(-100, G.rel.ashkaru - 3);
-      else G.rel.ashkaru = Math.min(100, G.rel.ashkaru + 1);
+      } else if (o.kind === 'meek') SF.addRel('ashkaru', -3);
+      else SF.addRel('ashkaru', 1);
       this.commsMenu();
     });
   },
@@ -352,8 +352,8 @@ SF.modes.encounter = {
   combatMenu() {
     const G = SF.G;
     this.open('COMBAT', [
-      { label: 'FIRE LASER', value: 'laser', disabled: G.ship.laser === 0 || G.ship.sys.wpn < 15 },
-      { label: 'FIRE MISSILE', value: 'missile', disabled: G.ship.missile === 0 || G.ship.sys.wpn < 15 || this.missileCd > 0 },
+      { label: 'FIRE LASER', value: 'laser', disabled: G.ship.laser === 0 || G.ship.sys.wpn < 15 || this.wpnCd > 0 },
+      { label: 'FIRE MISSILE', value: 'missile', disabled: G.ship.missile === 0 || G.ship.sys.wpn < 15 || this.missileCd > 0 || this.wpnCd > 0 },
       { label: 'EVASIVE PATTERN', value: 'evade' },
       { label: 'BREAK OFF (FLEE)', value: 'flee' },
       { label: 'BACK', value: 'back' }
@@ -416,13 +416,14 @@ SF.modes.encounter = {
         }
         const pref = SF.RACES[this.race].posturePref;
         if (!this.postureReacted) {
-          if (this.posture === pref) { this.postureReacted = true; G.rel[this.race] = Math.min(100, G.rel[this.race] + 2); }
+          // the Rhan Fayr answer only to deeds — postures don't move them
+          if (this.posture === pref) { this.postureReacted = true; if (this.race !== 'rhanfayr') SF.addRel(this.race, 2); }
           else {
             const pr = (SF.GAMBITS[this.race] && SF.GAMBITS[this.race].posture || {})[this.posture];
             if (pr) {
               this.postureReacted = true;
               SF.log(SF.RACES[this.race].name + ': ' + pr.line, SF.RACES[this.race].color);
-              if (pr.rel) G.rel[this.race] = SF.clamp(G.rel[this.race] + pr.rel, -100, 100);
+              if (pr.rel) SF.addRel(this.race, pr.rel);
             }
           }
         }
@@ -449,7 +450,7 @@ SF.modes.encounter = {
           SF.log(s.tell, SF.P.lgray);
           SF.sfx.comm();
           SF.log('VEL-MA-RAH: ' + s.reply, SF.P.yellow);
-          G.rel.velmarah = Math.min(100, G.rel.velmarah + 3);
+          SF.addRel('velmarah', 3);
           this.commBudget++;   // a good story buys more of their time
           this.commsMenu();
         });
@@ -458,7 +459,7 @@ SF.modes.encounter = {
       case 'drink': {
         const dr = SF.GAMBITS.corsair.drink;
         G.credits -= dr.cost;
-        G.rel.corsair = Math.min(100, G.rel.corsair + 1);
+        SF.addRel('corsair', 1);
         this.commBudget++;   // a paid-for round keeps the channel open
         SF.sfx.confirm();
         SF.log(dr.narrate, SF.P.lgray);
@@ -560,7 +561,6 @@ SF.modes.encounter = {
         break;
       }
       case 'tribute': {
-        const val = Math.round(SF.cargoValue() * 0.25 + G.credits * 0.15);
         for (const k in G.cargo) { G.cargo[k] = Math.round(G.cargo[k] * 0.75); if (G.cargo[k] <= 0) delete G.cargo[k]; }
         G.credits = Math.round(G.credits * 0.85);
         if (G.rel.corsair < 0) G.rel.corsair = Math.min(0, G.rel.corsair + 15);   // tribute buys tolerance, never costs standing
@@ -654,7 +654,6 @@ SF.modes.encounter = {
         break;
       }
       case 'firewhale': {
-        this.whaleAngry = true;
         SF.deed(-3, 'Killed a void-whale for its amber', true);
         SF.log('The beams walk along kilometres of flank. The whale SCREAMS across every frequency at once, then rolls, and the wash of its dying fluke hits like a moon.', SF.P.lred);
         SF.log(SF.takeDamage(40), SF.P.lred);
@@ -686,7 +685,7 @@ SF.modes.encounter = {
       // distress
       case 'giveparts': {
         G.cargo.titanium -= 5; if (G.cargo.titanium <= 0) delete G.cargo.titanium;
-        G.rel.velmarah = Math.min(100, G.rel.velmarah + 10);
+        SF.addRel('velmarah', 10);
         G.credits += 120;
         SF.deed(1, 'Repaired a stranded Vel-ma-rah caravel');
         SF.sfx.confirm();
@@ -716,7 +715,7 @@ SF.modes.encounter = {
             this.mainMenu();
             return;
           }
-          G.rel.ashkaru = Math.min(100, G.rel.ashkaru + 12);
+          SF.addRel('ashkaru', 12);
           if (G.crew[5].hp > 40) G.crew[5].hp = Math.max(40, G.crew[5].hp - 10);   // the work costs her, but she won't be lost to it
           G.stardate += 0.001;   // nine hours of silence: mercy runs the same clock as looting
           SF.deed(2, 'Sent the doctor aboard a plague-struck Ashkaru warbrand');
@@ -763,13 +762,13 @@ SF.modes.encounter = {
       if (this.race === 'kvoth') G.flags.kvothFired = true;
       if (this.scripted === 'first' && this.dispo !== 'hostile') {
         SF.deed(-2, 'Opened fire on the Kvoth toll patrol');
-        G.rel.kvoth = Math.max(-100, G.rel.kvoth - 50);
+        SF.addRel('kvoth', -50);
       } else if (this.race && this.dispo !== 'hostile') {
         // shooting a non-hostile: consequences. For the velmarah there are no
         // witnesses yet: the clans only learn if the caravel escapes alive
         const quiet = this.race === 'velmarah';
         SF.deed(-2, 'Opened fire on a non-hostile ' + SF.RACES[this.race].name + ' vessel', quiet);
-        if (!quiet) G.rel[this.race] = Math.max(-100, G.rel[this.race] - 50);
+        if (!quiet) SF.addRel(this.race, -50);
       }
     }
     this.playerFired = true;
@@ -807,6 +806,7 @@ SF.modes.encounter = {
       // the perfect crime: no witnesses, no standing lost, and the wreck pays.
       // Only the ledger of light records it.
       SF.deed(-4, 'Destroyed a Vel-ma-rah trader', true);
+      SF.G.flags.homeForfeit = true;   // absolute rule: ANY caravel kill forfeits home, even after judgment
       SF.log('The envelope tears. The crew does not scream, does not burn: a shimmer of gas widening into the vacuum, and gone. As if no one was ever there.', SF.P.lred);
       const took = SF.addCargo('auralite', 12 + Math.round(Math.random() * 10));
       if (took > 0) SF.log('The wreckage glitters: the envelope was spun from AURALITE; ' + Math.round(took) + ' M3 drift into reach of the cargo scoop. No witness, no judge.', SF.P.lred);
@@ -823,8 +823,8 @@ SF.modes.encounter = {
       G.tollPicket = false;
       SF.journal('We destroyed the Kvoth toll patrol rather than pay. Their last transmission was an itemized invoice.');
     }
-    if (this.race === 'kvoth') { G.rel.kvoth = Math.max(-100, G.rel.kvoth - 60); SF.log('Somewhere, a ledger entry turns red.', SF.P.dgray); }
-    if (this.race === 'ashkaru') G.rel.ashkaru = Math.max(-100, G.rel.ashkaru - 50);
+    if (this.race === 'kvoth') { SF.addRel('kvoth', -60); SF.log('Somewhere, a ledger entry turns red.', SF.P.dgray); }
+    if (this.race === 'ashkaru') SF.addRel('ashkaru', -50);
     const scrap = 40 + Math.round(Math.random() * 120);
     G.credits += scrap;
     SF.log('Salvage recovered: ' + scrap + ' CR.', SF.P.lgreen);
@@ -842,7 +842,7 @@ SF.modes.encounter = {
     const G = SF.G;
     // a caravel fired upon but not finished carries the tale to its clans
     if (this.race === 'velmarah' && this.playerFired && !this.enemyDead) {
-      G.rel.velmarah = Math.max(-100, G.rel.velmarah - 50);
+      SF.addRel('velmarah', -50);
       SF.log('Somewhere far off, a caravel is singing to its clans. The song is about you.', SF.P.dgray);
     }
     // stand off from the picket so proximity doesn't restart the encounter
@@ -861,8 +861,14 @@ SF.modes.encounter = {
   tick(dt) {
     if (this.over) return;
     SF.G.stardate += dt * 0.0004;
+    const laserCd = this.wpnCd > 0, missCd = this.missileCd > 0;
     if (this.missileCd > 0) this.missileCd -= dt;
     if (this.wpnCd > 0) this.wpnCd -= dt;
+    // when a weapon cooldown expires while the COMBAT menu is up, rebuild it so
+    // the just-cycled weapon re-enables (keep the cursor where it was)
+    if (this.menu && this.menuTitle === 'COMBAT' && ((laserCd && this.wpnCd <= 0) || (missCd && this.missileCd <= 0))) {
+      const i = this.menu.i; this.combatMenu(); this.menu.i = Math.min(i, this.menu.items.length - 1);
+    }
     if (this.enemyFleeing) {
       this.fleeT -= dt;
       if (this.fleeT <= 0) {
@@ -969,10 +975,4 @@ SF.rhanfayrRecall = function () {
   }
   SF.sfx.comm();
   SF.log('RHAN FAYR: ' + line, SF.P.white);
-};
-
-SF.cargoValue = function () {
-  let v = 0;
-  for (const k in SF.G.cargo) v += SF.G.cargo[k] * SF.EL[k].val;
-  return v;
 };

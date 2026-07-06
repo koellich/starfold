@@ -21,6 +21,12 @@ SF.PLANET_TYPES = {
   garden: { name: 'GARDEN',   colors: [SF.P.green, SF.P.lgreen, SF.P.blue, SF.P.brown], landable: true, hazard: 'PREDATOR' },
   gas:    { name: 'GAS GIANT',colors: [SF.P.magenta, SF.P.lmagenta, SF.P.brown, SF.P.yellow], landable: false }
 };
+// planet types whose band-0 tiles (lava / water) the terrain vehicle cannot enter;
+// sites are never placed there, landing on them is blocked, TV movement stops at them
+SF.LIQUID_TYPES = ['ocean', 'garden', 'molten'];
+// the frozen-dead-world palette (a world inside the Dimming): one source for map,
+// surface, and orbit renderers
+SF.COLD_COLORS = ['#232838', '#39415c', '#4a5578', '#5a6a94'];
 
 // hand-placed story stars ------------------------------------------------------
 SF.STORY_STARS = [
@@ -205,7 +211,7 @@ SF.genSurface = function (p) {
     }
   }
   // special sites: never in band 0 where the TV cannot enter (water/lava)
-  const siteBlocked = ['ocean', 'garden', 'molten'].includes(p.type);
+  const siteBlocked = SF.LIQUID_TYPES.includes(p.type);
   const siteXY = () => {
     let x = SF.ri(rng, 10, W - 10), y = SF.ri(rng, 8, H - 8);
     for (let n = 0; siteBlocked && tiles[y * W + x] === 0 && n < 300; n++) {
@@ -239,7 +245,7 @@ SF.surfMapCanvas = function (p, cold) {
   let cv = SF.galaxy.mapCache.get(key);
   if (cv) return cv;
   const surf = SF.genSurface(p);
-  const cols = (cold ? ['#232838', '#39415c', '#4a5578', '#5a6a94'] : SF.PLANET_TYPES[p.type].colors)
+  const cols = (cold ? SF.COLD_COLORS : SF.PLANET_TYPES[p.type].colors)
     .map(h => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)]);
   const W = SF.SURF_W, H = SF.SURF_H;
   cv = document.createElement('canvas');

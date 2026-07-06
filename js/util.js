@@ -2,7 +2,7 @@
 'use strict';
 window.SF = {};
 
-SF.VERSION = '1.0.0';
+SF.VERSION = '1.0.1';
 
 // ---- EGA palette -----------------------------------------------------------
 SF.P = {
@@ -35,7 +35,14 @@ SF.rf = (rng, a, b) => a + rng() * (b - a);
 SF.choice = (rng, arr) => arr[Math.floor(rng() * arr.length)];
 SF.clamp = (v, a, b) => v < a ? a : v > b ? b : v;
 SF.dist = (x1, y1, x2, y2) => Math.hypot(x2 - x1, y2 - y1);
-SF.lerp = (a, b, t) => a + (b - a) * t;
+// sum the values of a free-form map (cargo/tv holds), optionally transformed
+SF.sumMap = (obj, fn) => { let s = 0; for (const k in obj) s += fn ? fn(k, obj[k]) : obj[k]; return s; };
+// the 8-point compass label from (fx,fy) toward (tx,ty)
+SF.COMPASS = ['EAST', 'SOUTHEAST', 'SOUTH', 'SOUTHWEST', 'WEST', 'NORTHWEST', 'NORTH', 'NORTHEAST'];
+SF.compassDir = (fx, fy, tx, ty) => {
+  const a = Math.atan2(ty - fy, tx - fx);
+  return SF.COMPASS[Math.round(((a + Math.PI * 2) % (Math.PI * 2)) / (Math.PI / 4)) % 8];
+};
 
 // word wrap by character count (monospace rendering)
 SF.wrap = function (text, cols) {

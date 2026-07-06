@@ -58,10 +58,10 @@ SF.modes.space = {
   // the charted sphere of influence the ship is currently inside, or null.
   // Only spheres the chart core has charted count (Corsair Pocket never does).
   currentSphere() {
-    const G = SF.G;
-    const px = G.insys !== null ? SF.galaxy.stars[G.insys].x : G.px;
-    const py = G.insys !== null ? SF.galaxy.stars[G.insys].y : G.py;
-    for (const sp of SF.SPHERES) if (G.flags[sp.flag] && SF.dist(px, py, sp.x, sp.y) < sp.r) return sp;
+    const p = SF.shipPos();
+    // skip a sphere whose home star has died — the starmap erases it, so the
+    // navigator must not still announce crossing it
+    for (const sp of SF.SPHERES) if (SF.G.flags[sp.flag] && !SF.starCold(SF.galaxy.stars[sp.home]) && SF.dist(p.x, p.y, sp.x, sp.y) < sp.r) return sp;
     return null;
   },
 
@@ -120,7 +120,7 @@ SF.modes.space = {
       for (const el of SF.ELEMENTS) if (G.cargo[el.id]) lines.push('  ' + el.name.padEnd(10) + ' ' + Math.round(G.cargo[el.id]) + ' M3');
       lines.push(''); lines.push('ARTIFACTS:');
       if (!G.artifacts.length) lines.push('  (none)');
-      for (const a of G.artifacts) lines.push('  ' + SF.ARTIFACTS[a].name + (a === 'biodata' ? ': ' + (G.bioCount || 0) + ' ENTRIES' : ''));
+      for (const a of G.artifacts) lines.push('  ' + SF.ARTIFACTS[a].name + (a === 'biodata' ? ': ' + (G.bioCount || 0) + ' ENTRIES' : SF.installedArtifact(a) ? ' (KEYED IN)' : ''));
       lines.push(''); lines.push('INSTALLED: ' + (['pyramid', 'phasematrix', 'chartcore'].filter(f => G.flags[f]).map(f => SF.ARTIFACTS[f].name).join(', ') || '(none)'));
       SF.modes.pager = SF.ui.pager('CARGO MANIFEST', lines, () => SF.setMode('space'));
       SF.setMode('pager');
@@ -131,6 +131,8 @@ SF.modes.space = {
       this.open('JETTISON WHAT?', items, id => {
         SF.qtyPrompt(this, 'DUMP ' + SF.EL[id].name, Math.round(G.cargo[id]), n => {
           this.menu = null;
+          n = Math.min(n, Math.round(G.cargo[id] || 0));
+          if (n <= 0) return;
           G.cargo[id] -= n;
           if (G.cargo[id] <= 0.01) delete G.cargo[id];
           SF.sfx.confirm();
@@ -246,7 +248,7 @@ SF.modes.space = {
   engineer(v) {
     const G = SF.G, s = G.ship;
     this.menu = null;
-    const nm = { eng: 'ENGINES', shd: 'SHIELD GEN', wpn: 'WEAPONS', sen: 'SENSORS', life: 'LIFE SUPPORT' };
+    const nm = SF.SYS_NAMES;
     SF.log('UNIT CLAUD DAMAGE REPORT: HULL ' + Math.round(s.sys.hull) + '%. ARMOR ' + Math.round(s.armorPts) + '/' + SF.ARMOR_PTS[s.armor] + '. TV ' + Math.round(s.tvHull) + '%.', SF.P.lcyan);
     SF.log(Object.keys(nm).map(k => nm[k] + ' ' + Math.round(s.sys[k]) + '%').join('  '), s.sys.life < 50 ? SF.P.lred : SF.P.lgray);
     SF.log('CLAUD: "Corrective Longeron Adjustment and Upkeep Droid, reporting. Field repairs proceed continuously in flight, Captain. Hull plating is yard work, beyond me out here. Armor regrowth consumes titanium from the hold. I am ' + ((G.cargo.titanium || 0) > 0 ? 'adequately supplied."' : 'OUT of titanium."'), SF.P.lcyan);
@@ -379,8 +381,7 @@ SF.modes.space = {
     else this.tickInterstellar(dt, moving);
 
     // the cold of the Dimming (re-read insys: tickSystem may just have left the system)
-    const px = G.insys !== null ? SF.galaxy.stars[G.insys].x : G.px;
-    const py = G.insys !== null ? SF.galaxy.stars[G.insys].y : G.py;
+    const p = SF.shipPos();
     // the navigator calls out crossings of the CHARTED spheres (the chart core
     // put them on the map); the Corsair Pocket is on no chart, hence silent
     const inSph = this.currentSphere();
@@ -390,7 +391,7 @@ SF.modes.space = {
       this.sphereIn = inSph;
     }
 
-    if (SF.inDark(px, py)) {
+    if (SF.inDark(p.x, p.y)) {
       if (!this.coldWarned) {
         this.coldWarned = true;
         SF.log('The stars are gone. All of them. Hull temperature falling. Instruments returning values that mean nothing.', SF.P.lblue);
@@ -410,7 +411,7 @@ SF.modes.space = {
       if (G.artifacts.includes('resonance')) {
         this.pulseT = (this.pulseT || 0) - dt;
         if (this.pulseT <= 0) {
-          this.pulseT = SF.clamp(SF.dist(px, py, SF.DIM.cx, SF.DIM.cy) / 25, 0.2, 3);
+          this.pulseT = SF.clamp(SF.dist(p.x, p.y, SF.DIM.cx, SF.DIM.cy) / 25, 0.2, 3);
           SF.sfx.blip();
         }
       }
@@ -571,9 +572,9 @@ SF.modes.space = {
     }
     if (SF.inCorsairPocket(x, y)) return { rate: 1 / 20, table: [['corsair', 0.85], ['distress', 0.15]] };
     const table = [['velmarahTrader', 0.42], ['corsair', 0.14], ['kvothPatrol', 0.12], ['whale', 0.08], ['distress', 0.16], ['drone', 0.08]];
-    // refugee fleets: cultures whose home star has died take to the open reach
+    // refugee fleets: the Ashkaru take to the open reach once the Pyre falls
+    // (the corsair den at 110,185 lies beyond the doom radius, so it never dies)
     if (SF.starCold(SF.galaxy.stars[4])) table.push(['ashkRaider', 0.18]);
-    if (SF.starCold(SF.galaxy.stars[5])) table.push(['corsair', 0.12]);
     return { rate: 1 / 45, table };
   },
 
@@ -590,7 +591,9 @@ SF.modes.space = {
     if (inSystem) rate *= 0.6;
     this.encTimer -= dt;
     if (this.encTimer > 0) return;
-    if (Math.random() < rate * dt * 60) {
+    // rate is "expected encounters per second"; per frame that is rate*dt (the
+    // old *60 double-counted the framerate and made every zone fire within ~1s)
+    if (Math.random() < rate * dt) {
       this.encTimer = 12;
       let roll = Math.random() * table.reduce((s, t) => s + t[1], 0);
       let pick = table[0][0];
@@ -627,7 +630,8 @@ SF.modes.space = {
   draw() {
     const G = SF.G;
     if (G.insys !== null) this.drawSystem(); else this.drawInterstellar();
-    const dark = SF.inDark(G.insys !== null ? SF.galaxy.stars[G.insys].x : G.px, G.insys !== null ? SF.galaxy.stars[G.insys].y : G.py);
+    const p = SF.shipPos();
+    const dark = SF.inDark(p.x, p.y);
     SF.ui.drawStatus(dark ? (G.insys !== null ? 'SYSTEM: [NO DATA]' : 'DEEP SPACE ' + Math.round(Math.random() * 999) + ',' + -Math.round(Math.random() * 99)) : undefined);
     if (this.menu) { if (!SF.logBusy()) this.menu.draw(SF.L.px, SF.L.py + 140, SF.L.pw, this.menuTitle); }
     else {
@@ -699,20 +703,14 @@ SF.modes.space = {
     if (SF.inDark(G.px, G.py) && G.artifacts.includes('resonance')) {
       const d = SF.dist(G.px, G.py, SF.DIM.cx, SF.DIM.cy);
       const rate = d > 60 ? 'SLOWLY' : d > 35 ? 'STEADILY' : d > 15 ? 'QUICKLY' : 'FRANTICALLY';
-      const dirs = ['EAST', 'SOUTHEAST', 'SOUTH', 'SOUTHWEST', 'WEST', 'NORTHWEST', 'NORTH', 'NORTHEAST'];
-      const a = Math.atan2(SF.DIM.cy - G.py, SF.DIM.cx - G.px);
-      const oct = Math.round(((a + Math.PI * 2) % (Math.PI * 2)) / (Math.PI / 4)) % 8;
-      hint = 'ALL INSTRUMENTS LIE. THE LODESTAR PULSES ' + rate + '. IT LEANS ' + dirs[oct] + '.';
+      hint = 'ALL INSTRUMENTS LIE. THE LODESTAR PULSES ' + rate + '. IT LEANS ' + SF.compassDir(G.px, G.py, SF.DIM.cx, SF.DIM.cy) + '.';
     } else if (SF.inDark(G.px, G.py)) {
       hint = 'THE DARK. NO STARS. INSTRUMENTS RETURNING NONSENSE.';
     } else if (G.flags.pyramid && !G.ship.shieldsUp && SF.FLUXES.some(w => SF.dist(w.ax, w.ay, G.px, G.py) < 5 || SF.dist(w.bx, w.by, G.px, G.py) < 5)) {
       hint = 'FLUX CLOSE. ENS. LEE: "Shields, Captain. Shields first."';
     } else if (!G.flags.veilFound && G.flags.resonanceRead && SF.dist(G.px, G.py, 243, 12) < 20) {
       const d = SF.dist(G.px, G.py, 243, 12);
-      const dirs = ['EAST', 'SOUTHEAST', 'SOUTH', 'SOUTHWEST', 'WEST', 'NORTHWEST', 'NORTH', 'NORTHEAST'];
-      const a = Math.atan2(12 - G.py, 243 - G.px);
-      const oct = Math.round(((a + Math.PI * 2) % (Math.PI * 2)) / (Math.PI / 4)) % 8;
-      hint = 'THE CRYSTAL LODESTAR TREMBLES, ' + (d < 8 ? 'FRANTIC AND JOYFUL' : 'QUICK AND EAGER') + '. IT LEANS ' + dirs[oct] + '.';
+      hint = 'THE CRYSTAL LODESTAR TREMBLES, ' + (d < 8 ? 'FRANTIC AND JOYFUL' : 'QUICK AND EAGER') + '. IT LEANS ' + SF.compassDir(G.px, G.py, 243, 12) + '.';
     }
     SF.ui.hint(hint);
   },
@@ -847,7 +845,7 @@ SF.drawAlienShip = function (c, x, y, race, s) {
 // ==================================================================================
 SF.modes.starmap = {
   cx: 0, cy: 0,
-  enter() { this.cx = SF.G.insys !== null ? SF.galaxy.stars[SF.G.insys].x : SF.G.px; this.cy = SF.G.insys !== null ? SF.galaxy.stars[SF.G.insys].y : SF.G.py; },
+  enter() { const p = SF.shipPos(); this.cx = p.x; this.cy = p.y; },
   key(k) {
     const step = SF.keys.Shift ? 10 : 2;
     if (k === 'ArrowLeft') this.cx = SF.clamp(this.cx - step, 0, SF.SECTOR.w);
@@ -909,19 +907,18 @@ SF.modes.starmap = {
       }
     });
     // ship (position unknown while inside the Dimming)
-    const shx = G.insys !== null ? SF.galaxy.stars[G.insys].x : G.px;
-    const shy = G.insys !== null ? SF.galaxy.stars[G.insys].y : G.py;
-    if (SF.inDark(shx, shy)) {
+    const p = SF.shipPos();
+    if (SF.inDark(p.x, p.y)) {
       SF.ui.text(mx, my + 4, 'SHIP POSITION: UNKNOWN (INSIDE THE DIMMING)', SF.P.lred);
     } else {
       c.fillStyle = SF.P.white;
-      c.beginPath(); c.moveTo(sx(shx), sy(shy) - 6); c.lineTo(sx(shx) - 5, sy(shy) + 4); c.lineTo(sx(shx) + 5, sy(shy) + 4); c.closePath(); c.fill();
+      c.beginPath(); c.moveTo(sx(p.x), sy(p.y) - 6); c.lineTo(sx(p.x) - 5, sy(p.y) + 4); c.lineTo(sx(p.x) + 5, sy(p.y) + 4); c.closePath(); c.fill();
     }
     // cursor
     c.strokeStyle = SF.P.yellow;
     c.strokeRect(sx(this.cx) - 8, sy(this.cy) - 8, 16, 16);
     // info line
-    let info = 'CURSOR ' + Math.round(this.cx) + ',' + Math.round(this.cy) + '   DIST ' + SF.dist(this.cx, this.cy, shx, shy).toFixed(1);
+    let info = 'CURSOR ' + Math.round(this.cx) + ',' + Math.round(this.cy) + '   DIST ' + SF.dist(this.cx, this.cy, p.x, p.y).toFixed(1);
     let target = null;
     for (const s of SF.galaxy.stars) if (G.known[s.id] && SF.dist(s.x, s.y, this.cx, this.cy) < 4) { target = s; break; }
     if (target) info += '   ★ ' + SF.starName(target) + (SF.starCold(target) ? ' [DEAD]' : '') + (target.station && !SF.starCold(target) ? ' [' + target.station.name + ']' : '');
@@ -980,7 +977,7 @@ SF.modes.orbit = {
       if (k === 'Escape') this.landing = false;
       if (k === 'Enter') {
         const surf = SF.genSurface(this.planet);
-        if (surf.tiles[this.ly * SF.SURF_W + this.lx] === 0 && ['ocean', 'garden', 'molten'].includes(this.planet.type)) {
+        if (surf.tiles[this.ly * SF.SURF_W + this.lx] === 0 && SF.LIQUID_TYPES.includes(this.planet.type)) {
           SF.sfx.deny(); SF.log('ENS. LEE: "Not on the ' + (this.planet.type === 'molten' ? 'lava' : 'water') + ', Captain. Respectfully."');
           return;
         }

@@ -59,8 +59,8 @@ SF.modes.station = {
     if (SF.G.flags.podAboard) {
       SF.G.flags.podAboard = false;
       SF.G.credits += 1000;
-      SF.G.rel[this.st.race] = Math.min(100, SF.G.rel[this.st.race] + 5);
-      SF.G.rel.velmarah = Math.min(100, SF.G.rel.velmarah + 8);
+      SF.addRel(this.st.race, 5);
+      SF.addRel('velmarah', 8);
       SF.log('The rescued courier disembarks, still talking. A grateful clan-mother wires 1,000 CR before the airlock even cycles.', SF.P.lgreen);
     }
     SF.save(true);
@@ -180,7 +180,7 @@ SF.modes.station = {
               G.credits += n * price;
               SF.sfx.confirm();
               SF.log('Sold ' + n + ' M3 ' + SF.EL[id].name + ' for ' + (n * price) + ' CR.', SF.P.lgreen);
-              G.rel[this.st.race] = Math.min(100, G.rel[this.st.race] + (n * price > 300 ? 1 : 0));
+              SF.addRel(this.st.race, (n * price > 300 ? 1 : 0));
             }
             this.tradeMenu();
           }, () => this.tradeMenu());
@@ -209,7 +209,7 @@ SF.modes.station = {
         G.credits += sv.total;
         SF.sfx.confirm();
         SF.log('SURVEY DATA ACCEPTED: ' + sv.n + ' PLANETARY ENTRIES FROM BEYOND THE SPHERE. THE LEDGER WIDENS. CREDIT: ' + sv.total + ' CR.', SF.P.lcyan);
-        G.rel.kvoth = Math.min(100, G.rel.kvoth + (sv.total > 300 ? 1 : 0));
+        SF.addRel('kvoth', (sv.total > 300 ? 1 : 0));
       }
       if (v === 'buy:chartcore') {
         G.credits -= 500; G.artifacts.push('chartcore');
