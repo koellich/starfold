@@ -14,7 +14,7 @@ The game version is the semver constant `SF.VERSION` (util.js), shown on the tit
 
 ## Architecture
 
-Everything hangs off a single global namespace `window.SF` (created in `util.js`). There are no modules; `index.html` loads the scripts in strict dependency order:
+Everything hangs off a single global namespace `window.SF` (created in `util.js`). There are no modules; `index.html` loads the scripts (all under `js/`) in strict dependency order:
 
 ```
 util.js → ui.js → data.js → galaxy.js → game.js → space.js → surface.js → encounter.js → station.js → story.js
@@ -35,7 +35,7 @@ Modes and where they live: `title`, `intro`, `ending`, `gameover` (story.js); `s
 
 ### Game state and saves
 
-All mutable state lives in one JSON-serializable object, `SF.G` (created in `SF.newGame`, game.js). Saving is `JSON.stringify(SF.G)` to localStorage; **never put functions, class instances, or Maps in `SF.G`**. `SF.load` rejects any save whose `v` doesn't match, so a breaking change to the save shape requires bumping `v` and `SF.SAVE_KEY` together (currently 1 / `starfold_save_v1`), which orphans old saves.
+All mutable state lives in one JSON-serializable object, `SF.G` (created in `SF.newGame`, game.js). Saving is `JSON.stringify(SF.G)` to localStorage; **never put functions, class instances, or Maps in `SF.G`**. `SF.load` rejects any save whose `v` doesn't match, so a breaking change to the save shape requires bumping `SF.SAVE_V` (game.js; the stored `v` and `SF.SAVE_KEY` both derive from it, currently 1 / `starfold_save_v1`), which orphans old saves.
 
 Story/quest progression is tracked almost entirely through `SF.G.flags` (free-form booleans), `SF.G.rel` (per-race reputation), and `SF.G.virtue`/`deeds` (moral ledger read at the endgame judgment; positive deeds have diminishing repeats, sins don't; see `SF.deed` in game.js).
 
